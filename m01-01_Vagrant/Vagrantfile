@@ -1,7 +1,7 @@
 MACHINES = {
   :"centos-kern-upd" => {
-              :box_name => "centos/7",
-              :box_version => "1902.01",
+              :box_name => "generic/centos8s",
+              :box_version => "4.3.4",
               :cpus => 2,
               :memory => 2048,
             }

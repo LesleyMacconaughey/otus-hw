@@ -8,10 +8,10 @@
   tasks:
      
     - name: update
-      apt:
-        update_cashe = yes
-      tags:
-        - update apt
+    apt:
+      update_cashe = yes
+    tags:
+      - update apt
      
     - name: install nginx
       apt:

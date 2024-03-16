@@ -6,21 +6,37 @@
      nginx_listen_port: 8080
 
   tasks:
-     - name: update
-       apt:
-         update_cashe = yes
-       tags:
-         - update apt
-    r
+     
+    - name: update
+      apt:
+        update_cashe = yes
+      tags:
+        - update apt
+     
+    - name: install nginx
+      apt:
+        name: nginx
+        state: latest
+      tags:
+        - nginx-package
+
+    - name: NGINX | Create NGINX config file from template
+      template:
+        src: templates/nginx.conf.j2
+        dest: /tmp/nginx.conf
+      tags:
+        - nginx-configuration
+  
+    handlers:
+      - name: restart nginx
+        systemd: 
+          name: nginx
+          state: restarted
+          enabled: yes
+      
+      - name: reload nginx
+        systemd:
+          name: nginx
+          state: reloaded
 
 
-- name: NGINX | Create NGINX config file from template
-  hosts: nginx
-  become: true
-  vars:
-    nginx_listen_port: 8000
-template:
-src: templates/nginx.conf.j2
-dest: /tmp/nginx.conf
-tags:
-- nginx-configuration

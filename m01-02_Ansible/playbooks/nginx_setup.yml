@@ -8,7 +8,7 @@
   tasks:
      
     - name: update
-      apt:
+      ansible.builtin.apt:
         update_cashe = yes
       tags:
         - update apt

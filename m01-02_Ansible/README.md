@@ -27,7 +27,7 @@ vagrant ssh
 curl 192.168.11.150:8080
 ```
 В случае положительного результата увидим примерно следующее:
-----
+```sh
 <!DOCTYPE html>
 <html>
 <head>
@@ -53,6 +53,6 @@ Commercial support is available at
 <p><em>Thank you for using nginx.</em></p>
 </body>
 </html>
----
+```
 
 

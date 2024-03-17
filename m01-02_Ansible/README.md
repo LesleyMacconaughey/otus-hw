@@ -54,5 +54,16 @@ Commercial support is available at
 </body>
 </html>
 ```
-
+Выйдем из ВМ:
+```sh
+exit
+```
+Остановим ВМ:
+```sh
+vagrant halt
+```
+После всех проверок удалим ВМ:
+```sh
+vagrant destroy
+```
 

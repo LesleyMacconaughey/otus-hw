@@ -5,5 +5,11 @@
 ```sh
 vagrant up
 ```
+Убедимся, что ВМ запущена, должна иметь статус (running):
+
+```sh
+vagrant status
+```
+
 
 

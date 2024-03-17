@@ -10,6 +10,14 @@ vagrant up
 ```sh
 vagrant status
 ```
+Убедимся, что управляемая ВМ доступна:
+```sh
+ansible nginx -m ping
+```
+Если получен положительный результат ("ping": "pong"), можем приступать к запуску плейбука:
+```sh
+ansible-playbook playbooks/nginx_setup.yml
+```
 
 
 

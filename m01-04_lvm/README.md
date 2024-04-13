@@ -54,7 +54,7 @@ realtime =none                   extsz=4096   blocks=0, rtextents=0<br>
 mount /dev/temp_root/lv_root /mnt/
 ```
 Копируем все данные с / раздела в /mnt
-```
+```sh
 xfsdump -J - /dev/VolGroup00/LogVol00 | xfsrestore -J - /mnt
 ```
 xfsrestore: Restore Status: SUCCESS

@@ -54,10 +54,58 @@ realtime =none                   extsz=4096   blocks=0, rtextents=0<br>
 mount /dev/temp_root/lv_root /mnt/
 ```
 Копируем все данные с / раздела в /mnt
-```
+```sh
 xfsdump -J - /dev/VolGroup00/LogVol00 | xfsrestore -J - /mnt
 ```
-xfsrestore: Restore Status: SUCCESS
+xfsrestore: Restore Status: SUCCESS<br>
+Проверить что скопировалось можно командой ls /mnt.
+Сконфигурируем grub для того, чтобы при старте перейти в новый /.<br>
+Сымитируем текущий root, сделаем в него chroot и обновим grub:
+```sh
+for i in /proc/ /sys/ /dev/ /run/ /boot/; \
+do mount --bind $i /mnt/$i; done
+```
+```sh
+chroot /mnt/
+```
+```sh
+grub2-mkconfig -o /boot/grub2/grub.cfg
+```
+Found linux image: /boot/vmlinuz-3.10.0-1160.114.2.el7.x86_64<br>
+Found initrd image: /boot/initramfs-3.10.0-1160.114.2.el7.x86_64.img<br>
+Found linux image: /boot/vmlinuz-3.10.0-862.2.3.el7.x86_64<br>
+Found initrd image: /boot/initramfs-3.10.0-862.2.3.el7.x86_64.img<br>
+done<br>
+Обновим образ initrd<br>
+```sh
+cd /boot ; for i in `ls initramfs-*img`; \
+do dracut -v $i `echo $i|sed "s/initramfs-//g; \
+> s/.img//g"` --force; done
+```
+...<br>
+*** Creating initramfs image file '/boot/initramfs-3.10.0-862.2.3.el7.x86_64.img' done ***<br>
+Для того, чтобы при загрузке был смонтирован нужный root в файле
+/boot/grub2/grub.cfg заменить rd.lvm.lv=VolGroup00/LogVol00 на rd.lvm.lv=temp_root/lv_root
+```sh
+vi /boot/grub2/grub.cfg
+```
+Убедимся
+```sh
+lsblk
+```
+NAME                    MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT<br>
+sda                       8:0    0   40G  0 disk<br>
+├─sda1                    8:1    0    1M  0 part<br>
+├─sda2                    8:2    0    1G  0 part /boot<br>
+└─sda3                    8:3    0   39G  0 part<br>
+  ├─VolGroup00-LogVol00 253:0    0 37.5G  0 lvm<br>
+  └─VolGroup00-LogVol01 253:1    0  1.5G  0 lvm  [SWAP]<br>
+sdb                       8:16   0   10G  0 disk<br>
+└─temp_root-lv_root     253:2    0   10G  0 lvm  /<br>
+sdc                       8:32   0    2G  0 disk<br>
+sdd                       8:48   0    1G  0 disk<br>
+sde                       8:64   0    1G  0 disk<br>
+
 
 
 ## Выделить том под /home

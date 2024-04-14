@@ -105,7 +105,10 @@ sdb                       8:16   0   10G  0 disk<br>
 sdc                       8:32   0    2G  0 disk<br>
 sdd                       8:48   0    1G  0 disk<br>
 sde                       8:64   0    1G  0 disk<br>
-
+Изменим размер старой VG и вернем на него рут. Для этого удаляем старый LV размером в 40G и создаём новый на 8G:
+```sh
+lvremove /dev/VolGroup00/LogVol00
+```
 
 
 ## Выделить том под /home

@@ -111,30 +111,30 @@ sde                       8:64   0    1G  0 disk<br>
 lvremove /dev/VolGroup00/LogVol00
 ```
 
-```
+```sh
 lvcreate -n VolGroup00/LogVol00 -L 8G /dev/VolGroup00
 ```
 
-```
+```sh
 mkfs.xfs /dev/VolGroup00/LogVol00
 ```
-```
+```sh
 mount /dev/VolGroup00/LogVol00 /mnt
 ```
-```
+```sh
 xfsdump -J - /dev/vg_root/lv_root | xfsrestore -J - /mnt
 ```
-```
+```sh
 for i in /proc/ /sys/ /dev/ /run/ /boot/; \
  do mount --bind $i /mnt/$i; done
 ```
-```
+```sh
 chroot /mnt/
 ```
-```
+```sh
 grub2-mkconfig -o /boot/grub2/grub.cfg
 ```
-```
+```sh
 cd /boot ; for i in `ls initramfs-*img`; \
  do dracut -v $i `echo $i|sed "s/initramfs-//g; \
 > s/.img//g"` --force; done

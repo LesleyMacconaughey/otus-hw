@@ -57,6 +57,8 @@ mount /dev/temp_root/lv_root /mnt/
 ```sh
 xfsdump -J - /dev/VolGroup00/LogVol00 | xfsrestore -J - /mnt
 ```
+xfsdump: Dump Status: SUCCESS<br>
+xfsrestore: restore complete: 119 seconds elapsed<br>
 xfsrestore: Restore Status: SUCCESS<br>
 Проверить что скопировалось можно командой ls /mnt.
 Сконфигурируем grub для того, чтобы при старте перейти в новый /.<br>

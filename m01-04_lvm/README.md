@@ -30,18 +30,18 @@ pvcreate /dev/sdb
 ```
 Physical volume "/dev/sdb" successfully created.<br> 
 ```sh
-vgcreate temp_root /dev/sdb
+vgcreate vg_root /dev/sdb
 ```
   Volume group "temp_root" successfully created
 ```
-lvcreate -n lv_root -l +100%FREE /dev/temp_root
+lvcreate -n lv_root -l +100%FREE /dev/vg_root
 ```
   Logical volume "lv_root" created.<br> 
 Создадим на нем файловую систему и смонтируем его
 ```
-mkfs.xfs /dev/temp_root/lv_root
+mkfs.xfs /dev/vg_root/lv_root
 ```
-meta-data=/dev/temp_root/lv_root isize=512    agcount=4, agsize=655104 blks<br> 
+meta-data=/dev/vg_root/lv_root isize=512    agcount=4, agsize=655104 blks<br> 
          =                       sectsz=512   attr=2, projid32bit=1<br> 
          =                       crc=1        finobt=0, sparse=0<br> 
 data     =                       bsize=4096   blocks=2620416, imaxpct=25<br> 
@@ -51,7 +51,7 @@ log      =internal log           bsize=4096   blocks=2560, version=2<br>
          =                       sectsz=512   sunit=0 blks, lazy-count=1<br> 
 realtime =none                   extsz=4096   blocks=0, rtextents=0<br> 
 ```
-mount /dev/temp_root/lv_root /mnt/
+mount /dev/vg_root/lv_root /mnt
 ```
 Копируем все данные с / раздела в /mnt
 ```sh
@@ -86,7 +86,7 @@ do dracut -v $i `echo $i|sed "s/initramfs-//g; \
 ...<br>
 *** Creating initramfs image file '/boot/initramfs-3.10.0-862.2.3.el7.x86_64.img' done ***<br>
 Для того, чтобы при загрузке был смонтирован нужный root в файле
-/boot/grub2/grub.cfg заменим rd.lvm.lv=VolGroup00/LogVol00 на rd.lvm.lv=temp_root/lv_root
+/boot/grub2/grub.cfg заменим rd.lvm.lv=VolGroup00/LogVol00 на rd.lvm.lv=vg_root/lv_root
 ```sh
 vi /boot/grub2/grub.cfg
 ```
@@ -110,6 +110,36 @@ sde                       8:64   0    1G  0 disk<br>
 ```sh
 lvremove /dev/VolGroup00/LogVol00
 ```
+
+```
+lvcreate -n VolGroup00/LogVol00 -L 8G /dev/VolGroup00
+```
+
+```
+mkfs.xfs /dev/VolGroup00/LogVol00
+```
+```
+mount /dev/VolGroup00/LogVol00 /mnt
+```
+```
+xfsdump -J - /dev/vg_root/lv_root | xfsrestore -J - /mnt
+```
+```
+for i in /proc/ /sys/ /dev/ /run/ /boot/; \
+ do mount --bind $i /mnt/$i; done
+```
+```
+chroot /mnt/
+```
+```
+grub2-mkconfig -o /boot/grub2/grub.cfg
+```
+```
+cd /boot ; for i in `ls initramfs-*img`; \
+ do dracut -v $i `echo $i|sed "s/initramfs-//g; \
+> s/.img//g"` --force; done
+```
+
 
 
 ## Выделить том под /home

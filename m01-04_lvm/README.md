@@ -4,7 +4,7 @@
 
 Установим пакет xfsdump - он будет необходим для снятия копии тома.
 ```sh
-yum update && yum install xfsdump
+yum install -y xfsdump
 ```
 Complete!
 

@@ -86,7 +86,7 @@ do dracut -v $i `echo $i|sed "s/initramfs-//g; \
 ...<br>
 *** Creating initramfs image file '/boot/initramfs-3.10.0-862.2.3.el7.x86_64.img' done ***<br>
 Для того, чтобы при загрузке был смонтирован нужный root в файле
-/boot/grub2/grub.cfg заменить rd.lvm.lv=VolGroup00/LogVol00 на rd.lvm.lv=temp_root/lv_root
+/boot/grub2/grub.cfg заменим rd.lvm.lv=VolGroup00/LogVol00 на rd.lvm.lv=temp_root/lv_root
 ```sh
 vi /boot/grub2/grub.cfg
 ```

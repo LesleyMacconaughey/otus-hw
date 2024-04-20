@@ -73,8 +73,7 @@ chroot /mnt/
 ```sh
 grub2-mkconfig -o /boot/grub2/grub.cfg
 ```
-Found linux image: /boot/vmlinuz-3.10.0-1160.114.2.el7.x86_64<br>
-Found initrd image: /boot/initramfs-3.10.0-1160.114.2.el7.x86_64.img<br>
+Generating grub configuration file ...<br>
 Found linux image: /boot/vmlinuz-3.10.0-862.2.3.el7.x86_64<br>
 Found initrd image: /boot/initramfs-3.10.0-862.2.3.el7.x86_64.img<br>
 done<br>

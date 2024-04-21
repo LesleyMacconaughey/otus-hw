@@ -152,6 +152,18 @@ zpool import -d zpoolexport/ otus
 ```bash
 zpool status
 ```
+  pool: otus<br>
+ state: ONLINE<br>
+  scan: none requested<br>
+config:<br>
+<br>
+        NAME                          STATE     READ WRITE CKSUM<br>
+        otus                          ONLINE       0     0     0<br>
+          mirror-0                    ONLINE       0     0     0<br>
+            /otus1/zpoolexport/filea  ONLINE       0     0     0<br>
+            /otus1/zpoolexport/fileb  ONLINE       0     0     0<br>
+<br>
+errors: No known data errors<br>
 
 
 

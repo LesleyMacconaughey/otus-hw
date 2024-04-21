@@ -112,7 +112,7 @@ lvremove /dev/VolGroup00/LogVol00
 ```
 Do you really want to remove active logical volume VolGroup00/LogVol00? [y/n]: y<br>
   Logical volume "LogVol00" successfully removed<br>
-(у меня без перезагрузки удалить не получилось, писал, что файловая система занята)<br>
+==(у меня без перезагрузки удалить не получилось, писал, что файловая система занята)==<br>
 Создаем новый LV<br>
 ```sh
 lvcreate -n VolGroup00/LogVol00 -L 8G /dev/VolGroup00

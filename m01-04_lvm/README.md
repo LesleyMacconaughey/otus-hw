@@ -250,8 +250,39 @@ lvcreate -n LogVol_Home -L 1.9G vg_home
 ```
   Rounding up size to full physical extent 1.90 GiB<br>
   Logical volume "LogVol_Home" created.<br>
-
-
+Создадим файловую систему и смонтируем диск<br>
+```sh
+mkfs.xfs /dev/vg_home/LogVol_Home
+```
+meta-data=/dev/vg_home/LogVol_Home isize=512    agcount=4, agsize=124672 blks<br>
+         =                       sectsz=512   attr=2, projid32bit=1<br>
+         =                       crc=1        finobt=0, sparse=0<br>
+data     =                       bsize=4096   blocks=498688, imaxpct=25<br>
+         =                       sunit=0      swidth=0 blks<br>
+naming   =version 2              bsize=4096   ascii-ci=0 ftype=1<br>
+log      =internal log           bsize=4096   blocks=2560, version=2<br>
+         =                       sectsz=512   sunit=0 blks, lazy-count=1<br>
+realtime =none                   extsz=4096   blocks=0, rtextents=0<br>
+```sh
+mount /dev/vg_home/LogVol_Home /mnt/
+```
+Перенесем содержимое home
+```sh
+cp -aR /home/* /mnt/
+```
+Очистим
+```sh
+rm -rf /home/*
+```
+Перемонтируем из mnt в home
+```sh
+umount /mnt && mount /dev/vg_home/LogVol_Home /home
+```
+Правим fstab для автоматического монтирования /home
+```sh
+echo "`blkid | grep Home | awk '{print $2}'` \
+ /home xfs defaults 0 0" >> /etc/fstab
+```
 
 для /home - сделать том для снэпшотов
 прописать монтирование в fstab (попробовать с разными опциями и разными файловыми системами на выбор)

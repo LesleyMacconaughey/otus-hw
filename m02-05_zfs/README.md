@@ -171,7 +171,10 @@ errors: No known data errors<br>
 ```bash
 zfs get all otus
 ```
-
+Размер: `zfs get available otus`<br>
+```bash
+zfs get available otus
+```
 
 
 

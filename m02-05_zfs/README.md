@@ -116,6 +116,47 @@ otus4  compressratio         1.00x                  -<br>
 
 ---
 ## Определение настроек пула
+Скачиваем архив в домашний каталог: 
+```bash
+wget -O archive.tar.gz --no-check-certificate 'https://drive.usercontent.google.com/download?id=1MvrcEp-WgAQe57aDEzxSRalPAwbNN1Bb&export=download'
+```
+Saving to: 'archive.tar.gz'<br>
+100%[=======================================================================>] 7,275,140   3.60MB/s   in 1.9s   <br>
+2024-04-21 13:04:18 (3.60 MB/s) - 'archive.tar.gz' saved [7275140/7275140]<br>
+Разархивируем его:
+```bash
+tar -xzvf archive.tar.gz
+```
+zpoolexport/<br>
+zpoolexport/filea<br>
+zpoolexport/fileb<br>
+Проверим, возможно ли импортировать данный каталог в пул:
+```bash
+zpool import -d zpoolexport/
+```
+   pool: otus<br>
+     id: 6554193320433390805<br>
+  state: ONLINE<br>
+ action: The pool can be imported using its name or numeric identifier.<br>
+ config:<br>
+<br>
+        otus                          ONLINE<br>
+          mirror-0                    ONLINE<br>
+            /otus1/zpoolexport/filea  ONLINE<br>
+            /otus1/zpoolexport/fileb  ONLINE<br>
+Данный вывод показывает нам имя пула, тип raid и его состав. <br>
+Сделаем импорт данного пула к нам в ОС:<br>
+```bash
+zpool import -d zpoolexport/ otus
+```
+```bash
+zpool status
+```
+
+
+
+
+
 
 
 

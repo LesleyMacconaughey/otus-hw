@@ -67,6 +67,15 @@ zfs set compression=zle otus4
 ```sh
 zfs get all | grep compression
 ```
+otus1  compression           lzjb                   local<br>
+otus2  compression           lz4                    local<br>
+otus3  compression           gzip-9                 local<br>
+otus4  compression           zle                    local<br>
+Сжатие файлов будет работать только с файлами, которые были добавлены после включение настройки сжатия. 
+Скачаем один и тот же текстовый файл во все пулы: 
+```sh
+for i in {1..4}; do wget -P /otus$i https://gutenberg.org/cache/epub/2600/pg2600.converter.log; done
+```
 
 
 

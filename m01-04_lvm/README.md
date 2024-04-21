@@ -283,8 +283,26 @@ umount /mnt && mount /dev/vg_home/LogVol_Home /home
 echo "`blkid | grep Home | awk '{print $2}'` \
  /home xfs defaults 0 0" >> /etc/fstab
 ```
+## Работа со снапшотами
+<br>Сгенерируем файлы
+```sh
+touch /home/file{1..20}
+```
+Для /home сделаем том для снэпшотов
+```sh
+pvcreate /dev/sde
+  Physical volume "/dev/sde" successfully created.
+```
+```sh 
+vgcreate vg_snapshot /dev/sde
+```
+```sh
+lvcreate -n LogVol_snapshot -L 0.9G vg_snapshot
+```
+  Rounding up size to full physical extent 924.00 MiB<br>
+  Logical volume "LogVol_snapshot" created.<br>
+  Volume group "vg_snapshot" successfully created<br>
 
-для /home - сделать том для снэпшотов
 прописать монтирование в fstab (попробовать с разными опциями и разными файловыми системами на выбор)
 Работа со снапшотами:
 сгенерировать файлы в /home/

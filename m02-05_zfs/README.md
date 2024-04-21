@@ -59,6 +59,24 @@ zfs set compression=gzip-9 otus3
 ```sh
 zfs set compression=zle otus4
 ```
+Проверим, что все файловые системы имеют разные методы сжатия
+```sh
+zfs get all | grep compression
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

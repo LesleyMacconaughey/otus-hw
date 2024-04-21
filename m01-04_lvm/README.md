@@ -234,7 +234,24 @@ pvremove /dev/sdb
 ```
 
 ## Выделить том под /home
-выделить том под /var (/var - сделать в mirror)
+```sh
+pvcreate /dev/sdc
+```
+  Physical volume "/dev/sdc" successfully created.
+```sh
+vgcreate vg_home /dev/sdc
+```
+Создаем группу томов
+  Volume group "vg_home" successfully created<br>
+Создаем логический том LogVol_Home<br>
+```sh
+lvcreate -n LogVol_Home -L 1.9G vg_home
+```
+  Rounding up size to full physical extent 1.90 GiB<br>
+  Logical volume "LogVol_Home" created.<br>
+
+
+
 для /home - сделать том для снэпшотов
 прописать монтирование в fstab (попробовать с разными опциями и разными файловыми системами на выбор)
 Работа со снапшотами:

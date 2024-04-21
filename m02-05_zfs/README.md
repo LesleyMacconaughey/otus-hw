@@ -203,6 +203,20 @@ zfs get checksum otus
 NAME  PROPERTY  VALUE      SOURCE<br>
 otus  checksum  sha256     local<br>
 
+---
+## Работа со снапшотом, поиск сообщения от преподавателя
+Скачаем файл, указанный в задании:
+```bash
+wget -O otus_task2.file --no-check-certificate https://drive.usercontent.google.com/download?id=1wgxjih8YZ-cqLqaZVa0lA3h3Y029c3oI&export=download
+```
+Восстановим файловую систему из снапшота:
+```bash
+zfs receive otus/test@today < otus_task2.file
+```
+Далее, ищем в каталоге /otus/test файл с именем “secret_message”:
+```bash
+find /otus/test -name "secret_message"
+```
 
 
 

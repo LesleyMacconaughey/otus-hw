@@ -209,10 +209,14 @@ otus  checksum  sha256     local<br>
 ```bash
 wget -O otus_task2.file --no-check-certificate https://drive.usercontent.google.com/download?id=1wgxjih8YZ-cqLqaZVa0lA3h3Y029c3oI&export=download
 ```
+Saving to: 'otus_task2.file'<br>
+100%[=======================================================================>] 5,432,736   2.52MB/s   in 2.1s   <br>
+2024-04-21 13:18:07 (2.52 MB/s) - 'otus_task2.file' saved [5432736/5432736]<br>
 Восстановим файловую систему из снапшота:
 ```bash
 zfs receive otus/test@today < otus_task2.file
 ```
+[1]+  Done                    wget -O otus_task2.file --no-check-certificate https://drive.usercontent.google.com/download?id=1wgxjih8YZ-cqLqaZVa0lA3h3Y029c3oI <br>
 Далее, ищем в каталоге /otus/test файл с именем “secret_message”:
 ```bash
 find /otus/test -name "secret_message"

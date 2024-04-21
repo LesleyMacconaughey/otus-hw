@@ -175,6 +175,33 @@ zfs get all otus
 ```bash
 zfs get available otus
 ```
+NAME  PROPERTY   VALUE  SOURCE<br>
+otus  available  350M   -<br>
+Тип: `zfs get readonly otus`
+```bash
+zfs get readonly otus
+```
+NAME  PROPERTY  VALUE   SOURCE<br>
+otus  readonly  off     default<br>
+По типу FS мы можем понять, что позволяет выполнять чтение и запись<br>
+Значение recordsize: `zfs get recordsize otus`<br>
+```bash
+zfs get recordsize otus
+```
+NAME  PROPERTY    VALUE    SOURCE<br>
+otus  recordsize  128K     local<br>
+Тип сжатия (или параметр отключения): `zfs get compression otus`
+```bash
+zfs get compression otus
+```
+NAME  PROPERTY     VALUE     SOURCE<br>
+otus  compression  zle       local<br>
+Тип контрольной суммы: `zfs get checksum otus`
+```bash
+zfs get checksum otus
+```
+NAME  PROPERTY  VALUE      SOURCE<br>
+otus  checksum  sha256     local<br>
 
 
 

@@ -215,8 +215,14 @@ mkdir /tmp/oldvar && mv /var/* /tmp/oldvar
 ```
 Монтируем новый var в каталог /var
 ```sh
-umount /mnt
+mount /dev/vg_var/lv_var /var
 ```
+Правим fstab для автоматического монтирования /var
+```sh
+echo "`blkid | grep var: | awk '{print $2}'` \
+ /var ext4 defaults 0 0" >> /etc/fstab
+```
+Перезагружаемся и удаляем временную Volume Group
 
 ## Выделить том под /home
 выделить том под /var (/var - сделать в mirror)

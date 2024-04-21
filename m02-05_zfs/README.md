@@ -80,6 +80,21 @@ for i in {1..4}; do wget -P /otus$i https://gutenberg.org/cache/epub/2600/pg2600
 ```sh
 ls -l /otus*
 ```
+/otus1:<br>
+total 22075<br>
+-rw-r--r--. 1 root root 41034307 Apr  2 07:54 pg2600.converter.log<br>
+<br>
+/otus2:<br>
+total 17997<br>
+-rw-r--r--. 1 root root 41034307 Apr  2 07:54 pg2600.converter.log<br>
+<br>
+/otus3:<br>
+total 10961<br>
+-rw-r--r--. 1 root root 41034307 Apr  2 07:54 pg2600.converter.log<br>
+<br>
+/otus4:<br>
+total 40100<br>
+-rw-r--r--. 1 root root 41034307 Apr  2 07:54 pg2600.converter.log<br>
 
 
 

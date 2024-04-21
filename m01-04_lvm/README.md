@@ -304,5 +304,6 @@ umount /home
 ```sh
 lvconvert --merge /dev/vg_home/home_snap
 ```
+```sh
 mount /home
 ```

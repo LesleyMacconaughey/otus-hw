@@ -226,7 +226,9 @@ find /otus/test -name "secret_message"
 ```bash
 cat /otus/test/task1/file_mess/secret_message
 ```
-
+https://otus.ru/lessons/linux-hl/<br>
+Инфраструктура высоконагруженных систем<br>
+Продвинутый практический курс по инфраструктуре высоконагруженных и кластеризированных систем<br>
 
 
 

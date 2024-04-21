@@ -164,6 +164,13 @@ config:<br>
             /otus1/zpoolexport/fileb  ONLINE       0     0     0<br>
 <br>
 errors: No known data errors<br>
+Команда `zpool status` выдаст нам информацию о составе импортированного пула.<br>
+Если у Вас уже есть пул с именем otus, то можно поменять его имя во время импорта: `zpool import -d zpoolexport/ otus newotus`<br>
+Далее нам нужно определить настройки: `zpool get all otus`<br>
+Запрос сразу всех параметром файловой системы: `zfs get all otus`<br>
+```bash
+zfs get all otus
+```
 
 
 

@@ -221,7 +221,11 @@ zfs receive otus/test@today < otus_task2.file
 ```bash
 find /otus/test -name "secret_message"
 ```
-
+/otus/test/task1/file_mess/secret_message<br>
+Смотрим содержимое найденного файла:
+```bash
+cat /otus/test/task1/file_mess/secret_message
+```
 
 
 

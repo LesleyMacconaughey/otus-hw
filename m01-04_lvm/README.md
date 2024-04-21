@@ -110,17 +110,32 @@ sde                       8:64   0    1G  0 disk<br>
 ```sh
 lvremove /dev/VolGroup00/LogVol00
 ```
-
+Do you really want to remove active logical volume VolGroup00/LogVol00? [y/n]: y<br>
+  Logical volume "LogVol00" successfully removed<br>
+<br> (у меня без перезагрузки удалить не получилось, писал, что файловая система занята)<br>
+Создаем новый LV<br>
 ```sh
 lvcreate -n VolGroup00/LogVol00 -L 8G /dev/VolGroup00
 ```
-
+  Logical volume "LogVol00" created.<br>
+Создаем на нем файловую систему<br>
 ```sh
 mkfs.xfs /dev/VolGroup00/LogVol00
 ```
+meta-data=/dev/VolGroup00/LogVol00 isize=512    agcount=4, agsize=524288 blks<br>
+         =                       sectsz=512   attr=2, projid32bit=1<br>
+         =                       crc=1        finobt=0, sparse=0<br>
+data     =                       bsize=4096   blocks=2097152, imaxpct=25<br>
+         =                       sunit=0      swidth=0 blks<br>
+naming   =version 2              bsize=4096   ascii-ci=0 ftype=1<br>
+log      =internal log           bsize=4096   blocks=2560, version=2<br>
+         =                       sectsz=512   sunit=0 blks, lazy-count=1<br>
+realtime =none                   extsz=4096   blocks=0, rtextents=0<br>
+Монтируем в /mnt <br>
 ```sh
 mount /dev/VolGroup00/LogVol00 /mnt
 ```
+Переносим содержимое <br>
 ```sh
 xfsdump -J - /dev/vg_root/lv_root | xfsrestore -J - /mnt
 ```

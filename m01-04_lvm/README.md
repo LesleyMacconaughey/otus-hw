@@ -234,6 +234,7 @@ pvremove /dev/sdb
 ```
 
 ## Выделить том под /home
+Подготовим том для home
 ```sh
 pvcreate /dev/sdc
 ```

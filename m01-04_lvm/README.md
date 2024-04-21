@@ -238,11 +238,11 @@ pvremove /dev/sdb
 ```sh
 pvcreate /dev/sdc
 ```
-  Physical volume "/dev/sdc" successfully created.
+  Physical volume "/dev/sdc" successfully created.<br>
+Создаем группу томов
 ```sh
 vgcreate vg_home /dev/sdc
 ```
-Создаем группу томов
   Volume group "vg_home" successfully created<br>
 Создаем логический том LogVol_Home<br>
 ```sh

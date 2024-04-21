@@ -167,7 +167,7 @@ cd /boot ; for i in `ls initramfs-*img`; \
 *** Creating image file done ***<br>
 *** Creating initramfs image file '/boot/initramfs-3.10.0-862.2.3.el7.x86_64.img' done ***<br>
 Не перезагружаемся и не выходим из под chroot, перенесем /var на зеркало<br>
-## Выделим том под /var в зеркало<br>
+## Выделить том под /var в зеркало<br>
 Создаем зеркало на свободных дисках
 ```sh
 pvcreate /dev/sdc /dev/sdd

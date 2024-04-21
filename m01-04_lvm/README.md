@@ -112,7 +112,7 @@ lvremove /dev/VolGroup00/LogVol00
 ```
 Do you really want to remove active logical volume VolGroup00/LogVol00? [y/n]: y<br>
   Logical volume "LogVol00" successfully removed<br>
-<br> (у меня без перезагрузки удалить не получилось, писал, что файловая система занята)<br>
+(у меня без перезагрузки удалить не получилось, писал, что файловая система занята)<br>
 Создаем новый LV<br>
 ```sh
 lvcreate -n VolGroup00/LogVol00 -L 8G /dev/VolGroup00
@@ -139,6 +139,10 @@ mount /dev/VolGroup00/LogVol00 /mnt
 ```sh
 xfsdump -J - /dev/vg_root/lv_root | xfsrestore -J - /mnt
 ```
+xfsdump: dump complete: 76 seconds elapsed<br>
+xfsdump: Dump Status: SUCCESS<br>
+xfsrestore: restore complete: 76 seconds elapsed<br>
+xfsrestore: Restore Status: SUCCESS<br>
 ```sh
 for i in /proc/ /sys/ /dev/ /run/ /boot/; \
  do mount --bind $i /mnt/$i; done
@@ -149,13 +153,70 @@ chroot /mnt/
 ```sh
 grub2-mkconfig -o /boot/grub2/grub.cfg
 ```
+Generating grub configuration file ...<br>
+Found linux image: /boot/vmlinuz-3.10.0-862.2.3.el7.x86_64<br>
+Found initrd image: /boot/initramfs-3.10.0-862.2.3.el7.x86_64.img<br>
+done<br>
 ```sh
 cd /boot ; for i in `ls initramfs-*img`; \
  do dracut -v $i `echo $i|sed "s/initramfs-//g; \
 > s/.img//g"` --force; done
 ```
-
-
+...<br>
+*** Creating image file ***<br>
+*** Creating image file done ***<br>
+*** Creating initramfs image file '/boot/initramfs-3.10.0-862.2.3.el7.x86_64.img' done ***<br>
+Не перезагружаемся и не выходим из под chroot, перенесем /var на зеркало
+##Выделим том под /var в зеркало
+Создаем зеркало на свободных дисках
+```sh
+pvcreate /dev/sdc /dev/sdd
+```
+  Physical volume "/dev/sdc" successfully created.<br>
+  Physical volume "/dev/sdd" successfully created.<br>
+```sh
+vgcreate vg_var /dev/sdc /dev/sdd
+```
+  Volume group "vg_var" successfully created<br>
+```sh
+lvcreate -L 950M -m1 -n lv_var vg_var
+```
+  Rounding up size to full physical extent 952.00 MiB<br>
+  Logical volume "lv_var" created.<br>
+Создаем на нем ФС и перемещаем туда /var <br>
+```sh
+mkfs.ext4 /dev/vg_var/lv_var
+```
+Filesystem label=<br>
+OS type: Linux<br>
+Block size=4096 (log=2)<br>
+Fragment size=4096 (log=2)<br>
+Stride=0 blocks, Stripe width=0 blocks<br>
+60928 inodes, 243712 blocks<br>
+12185 blocks (5.00%) reserved for the super user<br>
+First data block=0<br>
+Maximum filesystem blocks=249561088<br>
+8 block groups<br>
+32768 blocks per group, 32768 fragments per group<br>
+7616 inodes per group<br>
+Superblock backups stored on blocks: <br>
+        32768, 98304, 163840, 229376<br>
+<br>
+Allocating group tables: done                            <br>
+Writing inode tables: done                            <br>
+Creating journal (4096 blocks): done<br>
+Writing superblocks and filesystem accounting information: done<br>
+```sh
+mount /dev/vg_var/lv_var /mnt
+```
+Cохраняем содержимое старого var<br>
+```sh
+mkdir /tmp/oldvar && mv /var/* /tmp/oldvar
+```
+Монтируем новый var в каталог /var
+```sh
+umount /mnt
+```
 
 ## Выделить том под /home
 выделить том под /var (/var - сделать в mirror)

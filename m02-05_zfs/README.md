@@ -113,6 +113,7 @@ otus2  compressratio         2.23x                  -<br>
 otus3  compressratio         3.66x                  -<br>
 otus4  compressratio         1.00x                  -<br>
 Из проделанных экспериментов следует, что алгоритм gzip-9 самый эффективный по сжатию.<br>
+
 ---
 ## Определение настроек пула
 

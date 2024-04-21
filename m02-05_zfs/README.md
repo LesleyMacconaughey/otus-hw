@@ -76,7 +76,10 @@ otus4  compression           zle                    local<br>
 ```sh
 for i in {1..4}; do wget -P /otus$i https://gutenberg.org/cache/epub/2600/pg2600.converter.log; done
 ```
-
+Проверим, что файл был скачан во все пулы:
+```sh
+ls -l /otus*
+```
 
 
 

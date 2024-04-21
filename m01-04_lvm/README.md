@@ -112,7 +112,7 @@ lvremove /dev/VolGroup00/LogVol00
 ```
 Do you really want to remove active logical volume VolGroup00/LogVol00? [y/n]: y<br>
   Logical volume "LogVol00" successfully removed<br>
-==(у меня без перезагрузки удалить не получилось, писал, что файловая система занята)==<br>
+==(у меня без перезагрузки удалить не получилось, писал, что файловая система занята)== <br>
 Создаем новый LV<br>
 ```sh
 lvcreate -n VolGroup00/LogVol00 -L 8G /dev/VolGroup00
@@ -166,8 +166,8 @@ cd /boot ; for i in `ls initramfs-*img`; \
 *** Creating image file ***<br>
 *** Creating image file done ***<br>
 *** Creating initramfs image file '/boot/initramfs-3.10.0-862.2.3.el7.x86_64.img' done ***<br>
-Не перезагружаемся и не выходим из под chroot, перенесем /var на зеркало
-##Выделим том под /var в зеркало
+Не перезагружаемся и не выходим из под chroot, перенесем /var на зеркало<br>
+##Выделим том под /var в зеркало<br>
 Создаем зеркало на свободных дисках
 ```sh
 pvcreate /dev/sdc /dev/sdd

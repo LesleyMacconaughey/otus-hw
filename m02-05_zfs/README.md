@@ -29,6 +29,21 @@ zpool create otus4 mirror /dev/sdh /dev/sdi
 ```
 zpool list
 ```
+NAME    SIZE  ALLOC   FREE  CKPOINT  EXPANDSZ   FRAG    CAP  DEDUP    HEALTH  ALTROOT<br>
+otus1   480M  91.5K   480M        -         -     0%     0%  1.00x    ONLINE  -<br>
+otus2   480M  91.5K   480M        -         -     0%     0%  1.00x    ONLINE  -<br>
+otus3   480M  91.5K   480M        -         -     0%     0%  1.00x    ONLINE  -<br>
+otus4   480M  91.5K   480M        -         -     0%     0%  1.00x    ONLINE  -<br>
+Команда zpool status показывает информацию о каждом диске, состоянии сканирования и об ошибках чтения, записи и совпадения хэш-сумм
+```sh
+zpool status
+```
+Команда zpool list показывает информацию о размере пула, количеству занятого и свободного места, дедупликации и т.д.
+```sh
+zpool list
+```
+
+
 
 
 Что нужно сделать?

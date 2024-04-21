@@ -288,24 +288,21 @@ echo "`blkid | grep Home | awk '{print $2}'` \
 ```sh
 touch /home/file{1..20}
 ```
-Для /home сделаем том для снэпшотов
+Сделаем снэпшот
 ```sh
-pvcreate /dev/sde
-  Physical volume "/dev/sde" successfully created.
+ lvcreate -L 100MB -s -n home_snap /dev/vg_home/LogVol_Home
 ```
-```sh 
-vgcreate vg_snapshot /dev/sde
+  Logical volume "home_snap" created.<br>
+Удалим часть файлов
+```sh
+rm -f /home/file{11..20}
+```
+Восстановим из снапшота
+```sh
+umount /home
 ```
 ```sh
-lvcreate -n LogVol_snapshot -L 0.9G vg_snapshot
+lvconvert --merge /dev/vg_home/home_snap
 ```
-  Rounding up size to full physical extent 924.00 MiB<br>
-  Logical volume "LogVol_snapshot" created.<br>
-  Volume group "vg_snapshot" successfully created<br>
-
-прописать монтирование в fstab (попробовать с разными опциями и разными файловыми системами на выбор)
-Работа со снапшотами:
-сгенерировать файлы в /home/
-снять снэпшот
-удалить часть файлов
-восстановиться со снэпшота
+mount /home
+```

@@ -95,9 +95,23 @@ total 10961<br>
 /otus4:<br>
 total 40100<br>
 -rw-r--r--. 1 root root 41034307 Apr  2 07:54 pg2600.converter.log<br>
-
-
-
+Проверим, сколько места занимает один и тот же файл в разных пулах и проверим степень сжатия файлов:
+```sh
+zfs list
+```
+NAME    USED  AVAIL     REFER  MOUNTPOINT<br>
+otus1  21.7M   330M     21.6M  /otus1<br>
+otus2  17.7M   334M     17.6M  /otus2<br>
+otus3  10.8M   341M     10.7M  /otus3<br>
+otus4  39.3M   313M     39.2M  /otus4<br>
+```sh
+zfs get all | grep compressratio | grep -v ref
+```
+otus1  compressratio         1.82x                  -<br>
+otus2  compressratio         2.23x                  -<br>
+otus3  compressratio         3.66x                  -<br>
+otus4  compressratio         1.00x                  -<br>
+Из проделанных экспериментов следует, что алгоритм gzip-9 самый эффективный по сжатию.
 
 
 

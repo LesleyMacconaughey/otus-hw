@@ -223,6 +223,15 @@ echo "`blkid | grep var: | awk '{print $2}'` \
  /var ext4 defaults 0 0" >> /etc/fstab
 ```
 Перезагружаемся и удаляем временную Volume Group
+```sh
+lvremove /dev/vg_root/lv_root
+```
+```sh
+vgremove /dev/vg_root
+```
+```sh
+pvremove /dev/sdb
+```
 
 ## Выделить том под /home
 выделить том под /var (/var - сделать в mirror)

@@ -45,7 +45,7 @@ cd ~
 ```
 Устанавливаем необходимые пакеты:
 ```sh
-yum install -y redhat-lsb-core \wget rpmdevtools rpm-build createrepo yum-utils gcc
+yum install -y redhat-lsb-core wget rpmdevtools rpm-build createrepo yum-utils gcc
 ```
 Загрузим SRPM пакет NGINX для дальнейшей работы над ним:
 ```sh

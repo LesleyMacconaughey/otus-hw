@@ -207,6 +207,15 @@ EOF
 ```sh
 yum repolist enabled | grep otus
 ```
+otus                otus-linux<br>
+```sh
+yum list | grep otus
+```
+Так как `NGINX` у нас уже стоит, установим репозиторий `percona-release`:
+```sh
+yum install percona-orchestrator.x86_64 -y
+```
+
 
 
 

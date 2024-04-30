@@ -82,6 +82,11 @@ drwxr-xr-x.  4 root root       34 Apr 30 16:02 rpmbuild<br>
 ```sh
 yum-builddep rpmbuild/SPECS/nginx.spec
 ```
+Предложит установить - соглашаемся:<br>
+Install  4 Packages<br>
+Upgrade  7 Packages<br>
+Total download size: 13 M<br>
+Is this ok [y/N]:<br>
 Поправим spec файл, чтобы NGINX собирался с необходимыми нам опциями:
 ```sh
 vi rpmbuild/SPECS/nginx.spec

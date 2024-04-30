@@ -71,6 +71,23 @@ yum-builddep rpmbuild/SPECS/nginx.spec
 vi rpmbuild/SPECS/nginx.spec
 ```
 В нашем случае добавим --with-openssl=/<br>
-
+После чего запустим сборку RPM пакета:
+```sh
+rpmbuild -bb rpmbuild/SPECS/nginx.spec
+```
+После завершения проверим, что пакеты создались:
+```sh
+ls -la /root/rpmbuild/RPMS/x86_64/
+```
+Установим наш созданный пакет nginx, запустим и проверим его работу :
+```sh
+yum localinstall /root/rpmbuild/RPMS/x86_64/nginx-1.20.2-1.el8.ngx.x86_64.rpm
+```
+```sh
+systemctl start nginx
+```
+```sh
+systemctl status nginx
+```
 
 

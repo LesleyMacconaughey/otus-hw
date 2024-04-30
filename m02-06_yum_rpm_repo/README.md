@@ -144,12 +144,23 @@ Apr 30 16:43:09 centos8-hw06 systemd[1]: Started nginx - high performance web se
 ---
 ## Создем свой репозиторий и размещаем там ранее собранный RPM
 
+Директория для статики у NGINX по умолчанию /usr/share/nginx/html. Создадим там каталог repo:
 ```sh
 mkdir /usr/share/nginx/html/repo
 ```
+Копируем туда наш собранный RPM и, например, RPM для установки репозитория Percona-Server:
 ```sh
 cp /root/rpmbuild/RPMS/x86_64/nginx-1.20.2-1.el8.ngx.x86_64.rpm /usr/share/nginx/html/repo/
 ```
+```sh
+wget https://downloads.percona.com/downloads/percona-distribution-mysql-ps/percona-distribution-mysql-ps-8.0.28/binary/redhat/8/x86_64/percona-orchestrator-3.2.6-2.el8.x86_64.rpm -O /usr/share/nginx/html/repo/percona-orchestrator-3.2.6-2.el8.x86_64.rpm
+```
+Инициализируем репозиторий:
+```sh
+createrepo /usr/share/nginx/html/repo/
+```
+
+
 
 
 

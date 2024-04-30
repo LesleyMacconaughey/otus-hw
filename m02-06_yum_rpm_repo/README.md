@@ -56,6 +56,7 @@ Installed:<br>
 ```sh
 wget https://nginx.org/packages/centos/8/SRPMS/nginx-1.20.2-1.el8.ngx.src.rpm
 ```
+... - 'nginx-1.20.2-1.el8.ngx.src.rpm' saved [1086865/1086865]<br>
 Установим пакет (при установке такого пакета в домашней директории создается древо каталогов для сборки):
 ```sh
 rpm -i nginx-1.*

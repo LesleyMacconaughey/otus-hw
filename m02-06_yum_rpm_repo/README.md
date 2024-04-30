@@ -179,6 +179,8 @@ autoindex on;
 ```sh
 nginx -t
 ```
+nginx: the configuration file /etc/nginx/nginx.conf syntax is ok<br>
+nginx: configuration file /etc/nginx/nginx.conf test is successful<br>
 ```sh
 nginx -s reload
 ```

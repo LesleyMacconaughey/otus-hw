@@ -61,6 +61,7 @@ wget https://nginx.org/packages/centos/8/SRPMS/nginx-1.20.2-1.el8.ngx.src.rpm
 ```sh
 rpm -i nginx-1.*
 ```
+Возникнет предупреждение `warning: group builder does not exist - using root` - игнорируем<br>
 Скачаем и разархивируем последний исходник для openssl (он потребуется при сборке):
 ```sh
 wget https://github.com/openssl/openssl/archive/refs/heads/OpenSSL_1_1_1-stable.zip

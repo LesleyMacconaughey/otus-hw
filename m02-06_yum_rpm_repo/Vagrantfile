@@ -1,28 +1,17 @@
 # -*- mode: ruby -*-
-
-# Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
-VAGRANTFILE_API_VERSION = "2"
+# vi: set ft=ruby :
 
 Vagrant.configure("2") do |config|
-  config.vm.box = "bento/ubuntu-20.04"
 
-  # Set the hostname of the VM
-  config.vm.hostname = "my-ubuntu-vm"
+  config.vm.box = "generic/centos8s"
+  config.vm.box_version = "4.3.12"
+  config.vm.provider :virtualbox
+  config.vm.hostname = "centos8-hw06"
+  config.vm.network "private_network", ip: "192.168.56.10"
+  config.vm.network "public_network"
 
-  # Set the number of CPUs for the VM
-  config.vm.cpus = 2
-
-  # Set the amount of memory for the VM
-  config.vm.memory = "512MB"
-
-  # Set the default SSH port for the VM
-  config.vm.network :private_network, port: 2222
-
-  # Configure the VM to use NFS shared folders
-  config.vm.synced_folder ".", "/vagrant", type: "nfs"
-
-  # Provision the VM using Ansible
-  config.vm.provision "ansible" do |ansible|
-    ansible.playbook = "provision.yml"
+  config.vm.provider "virtualbox" do |vb|
+     vb.memory = "1024"
+     vb.cpus = 8
+     end
   end
-end

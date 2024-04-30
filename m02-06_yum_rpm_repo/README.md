@@ -203,6 +203,11 @@ gpgcheck=0
 enabled=1
 EOF
 ```
+Убедимся, что репозиторий подключился и посмотрим, что в нем есть:
+```sh
+yum repolist enabled | grep otus
+```
+
 
 
 

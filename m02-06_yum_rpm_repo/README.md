@@ -91,7 +91,7 @@ Is this ok [y/N]:<br>
 ```sh
 vi rpmbuild/SPECS/nginx.spec
 ```
-В нашем случае добавим `--with-openssl=/root/openssl-OpenSSL_1_1_1-stable/`<br>
+В нашем случае добавим в секцию `%build` не забывая про `\` пареметр `--with-openssl=/root/openssl-OpenSSL_1_1_1-stable/`<br>
 После чего запустим сборку RPM пакета:
 ```sh
 rpmbuild -bb rpmbuild/SPECS/nginx.spec

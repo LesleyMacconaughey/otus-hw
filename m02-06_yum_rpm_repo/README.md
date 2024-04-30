@@ -175,7 +175,13 @@ index index.html index.htm;
 autoindex on;
 }
 ```
-
+Проверяем синтаксис и перезапускаем NGINX:
+```sh
+nginx -t
+```
+```sh
+nginx -s reload
+```
 
 
 

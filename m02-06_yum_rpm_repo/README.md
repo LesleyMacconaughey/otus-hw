@@ -217,7 +217,12 @@ percona-orchestrator.x86_64                                       2:3.2.6-2.el8 
 ```sh
 yum install percona-orchestrator.x86_64 -y
 ```
-
+==================================================================================================<br>
+ Package                       Architecture    Version                   Repository          Size<br>
+==================================================================================================<br>
+Installing:<br>
+ percona-orchestrator          x86_64          2:3.2.6-2.el8             otus               5.0 M<br>
+Complete!<br>
 
 
 

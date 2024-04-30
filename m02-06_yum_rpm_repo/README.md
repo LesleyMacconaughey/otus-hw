@@ -47,6 +47,42 @@ cd ~
 ```sh
 yum install -y redhat-lsb-core wget rpmdevtools rpm-build createrepo yum-utils gcc
 ```
+`Upgraded:
+  cpp-8.5.0-22.el8.x86_64                             dnf-plugins-core-4.0.21-25.el8.noarch      
+  gcc-8.5.0-22.el8.x86_64                             gcc-c++-8.5.0-22.el8.x86_64                
+  libgcc-8.5.0-22.el8.x86_64                          libgomp-8.5.0-22.el8.x86_64                
+  libstdc++-8.5.0-22.el8.x86_64                       libstdc++-devel-8.5.0-22.el8.x86_64        
+  python3-dnf-plugins-core-4.0.21-25.el8.noarch       yum-utils-4.0.21-25.el8.noarch             
+Installed:
+  annobin-11.13-2.el8.x86_64                     at-3.1.20-12.el8.x86_64                         
+  avahi-libs-0.7-27.el8.x86_64                   bc-1.07.1-5.el8.x86_64                          
+  createrepo_c-0.17.7-6.el8.x86_64               createrepo_c-libs-0.17.7-6.el8.x86_64           
+  cups-client-1:2.2.6-57.el8.x86_64              cups-libs-1:2.2.6-57.el8.x86_64                 
+  drpm-0.4.1-3.el8.x86_64                        dwz-0.12-10.el8.x86_64                          
+  ed-1.14.2-4.el8.x86_64                         efi-srpm-macros-3-3.el8.noarch                  
+  elfutils-0.190-2.el8.x86_64                    esmtp-1.2-15.el8.x86_64                         
+  gc-7.6.4-3.el8.x86_64                          gcc-plugin-annobin-8.5.0-22.el8.x86_64          
+  gdb-headless-8.2-20.el8.x86_64                 ghc-srpm-macros-1.4.2-7.el8.noarch              
+  go-srpm-macros-2-17.el8.noarch                 guile-5:2.0.14-7.el8.x86_64                     
+  libatomic_ops-7.6.2-3.el8.x86_64               libbabeltrace-1.5.4-4.el8.x86_64                
+  libesmtp-1.0.6-18.el8.x86_64                   libipt-1.6.1-8.el8.x86_64                       
+  liblockfile-1.14-2.el8.x86_64                  libtool-ltdl-2.4.6-25.el8.x86_64                
+  mailx-12.5-29.el8.x86_64                       ncurses-compat-libs-6.1-10.20180224.el8.x86_64  
+  nspr-4.35.0-1.el8.x86_64                       nss-3.90.0-7.el8.x86_64                         
+  nss-softokn-3.90.0-7.el8.x86_64                nss-softokn-freebl-3.90.0-7.el8.x86_64          
+  nss-sysinit-3.90.0-7.el8.x86_64                nss-util-3.90.0-7.el8.x86_64                    
+  ocaml-srpm-macros-5-4.el8.noarch               openblas-srpm-macros-2-2.el8.noarch             
+  perl-srpm-macros-1-25.el8.noarch               python-rpm-macros-3-45.el8.noarch               
+  python-srpm-macros-3-45.el8.noarch             python3-rpm-macros-3-45.el8.noarch              
+  qt5-srpm-macros-5.15.3-1.el8.noarch            redhat-lsb-core-4.1-47.el8.x86_64               
+  redhat-lsb-submod-security-4.1-47.el8.x86_64   redhat-rpm-config-131-1.el8.noarch              
+  rpm-build-4.14.3-31.el8.x86_64                 rpmdevtools-8.10-8.el8.noarch                   
+  rust-srpm-macros-5-2.el8.noarch                spax-1.5.3-13.el8.x86_64                        
+  time-1.9-3.el8.x86_64                          unzip-6.0-46.el8.x86_64                         
+  util-linux-user-2.32.1-43.el8.x86_64           zip-3.0-23.el8.x86_64                           
+  zstd-1.4.4-1.el8.x86_64                       `
+
+
 Загрузим SRPM пакет NGINX для дальнейшей работы над ним:
 ```sh
 wget https://nginx.org/packages/centos/8/SRPMS/nginx-1.20.2-1.el8.ngx.src.rpm

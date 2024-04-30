@@ -119,6 +119,27 @@ systemctl start nginx
 ```sh
 systemctl status nginx
 ```
+● nginx.service - nginx - high performance web server<br>
+   Loaded: loaded (/usr/lib/systemd/system/nginx.service; disabled; vendor preset: disabled)<br>
+   Active: active (running) since Tue 2024-04-30 16:43:09 UTC; 5s ago<br>
+     Docs: http://nginx.org/en/docs/<br>
+  Process: 50752 ExecStart=/usr/sbin/nginx -c /etc/nginx/nginx.conf (code=exited, status=0/SUCCES><br>
+ Main PID: 50753 (nginx)<br>
+    Tasks: 9 (limit: 4684)<br>
+   Memory: 8.7M<br>
+   CGroup: /system.slice/nginx.service<br>
+           ├─50753 nginx: master process /usr/sbin/nginx -c /etc/nginx/nginx.conf<br>
+           ├─50754 nginx: worker process<br>
+           ├─50755 nginx: worker process<br>
+           ├─50756 nginx: worker process<br>
+           ├─50757 nginx: worker process<br>
+           ├─50758 nginx: worker process<br>
+           ├─50759 nginx: worker process<br>
+           ├─50760 nginx: worker process<br>
+           └─50761 nginx: worker process<br>
+<br>
+Apr 30 16:43:09 centos8-hw06 systemd[1]: Starting nginx - high performance web server...<br>
+Apr 30 16:43:09 centos8-hw06 systemd[1]: Started nginx - high performance web server.<br>
 ---
 ## Создем свой репозиторий и размещаем там ранее собранный RPM
 

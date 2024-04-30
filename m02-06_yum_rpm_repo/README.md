@@ -66,6 +66,7 @@ rpm -i nginx-1.*
 ```sh
 wget https://github.com/openssl/openssl/archive/refs/heads/OpenSSL_1_1_1-stable.zip
 ```
+...- 'OpenSSL_1_1_1-stable.zip' saved [11924330]
 ```sh
  unzip OpenSSL_1_1_1-stable.zip
 ```

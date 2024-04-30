@@ -52,7 +52,7 @@ Upgraded:<br>
   ...<br>   
 Installed:<br>
   ...<br>
-Загрузим SRPM пакет NGINX для дальнейшей работы над ним:
+<br>Загрузим SRPM пакет NGINX для дальнейшей работы над ним:
 ```sh
 wget https://nginx.org/packages/centos/8/SRPMS/nginx-1.20.2-1.el8.ngx.src.rpm
 ```

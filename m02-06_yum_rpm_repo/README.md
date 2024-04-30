@@ -184,6 +184,30 @@ nginx: configuration file /etc/nginx/nginx.conf test is successful<br>
 ```sh
 nginx -s reload
 ```
+Можно убедиться в доступности репозитория:
+```sh
+curl -a http://localhost/repo/
+```
+<html><br>
+<head><title>Index of /repo/</title></head><br>
+<body><br>
+<h1>Index of /repo/</h1><hr><pre><a href="../">../</a><br>
+<a href="repodata/">repodata/</a>                                          30-Apr-2024 16:51                   -<br>
+<a href="nginx-1.20.2-1.el8.ngx.x86_64.rpm">nginx-1.20.2-1.el8.ngx.x86_64.rpm</a>                  30-Apr-2024 16:51             2249516<br>
+<a href="percona-orchestrator-3.2.6-2.el8.x86_64.rpm">percona-orchestrator-3.2.6-2.el8.x86_64.rpm</a>        16-Feb-2022 15:57             5222976<br>
+</pre><hr></body><br>
+</html><br>
+Добавим созданный репозиторий в `/etc/yum.repos.d`
+```sh
+cat >> /etc/yum.repos.d/otus.repo << EOF
+[otus]
+name=otus-linux
+baseurl=http://localhost/repo
+gpgcheck=0
+enabled=1
+EOF
+```
+
 
 
 

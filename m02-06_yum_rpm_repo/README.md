@@ -159,6 +159,22 @@ wget https://downloads.percona.com/downloads/percona-distribution-mysql-ps/perco
 ```sh
 createrepo /usr/share/nginx/html/repo/
 ```
+Directory walk started<br>
+Directory walk done - 2 packages<br>
+Temporary output repo path: /usr/share/nginx/html/repo/.repodata/<br>
+Preparing sqlite DBs<br>
+Pool started (with 5 workers)<br>
+Pool finished<br>
+Настроим в NGINX доступ к листингу каталога:
+В `location /` в файле `/etc/nginx/conf.d/default.conf` добавим директиву `autoindex on`.
+В результате `location` будет выглядеть так:
+```sh
+location / {
+root /usr/share/nginx/html;
+index index.html index.htm;
+autoindex on;
+}
+```
 
 
 

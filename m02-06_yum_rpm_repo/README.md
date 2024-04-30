@@ -70,6 +70,14 @@ wget https://github.com/openssl/openssl/archive/refs/heads/OpenSSL_1_1_1-stable.
 ```sh
  unzip OpenSSL_1_1_1-stable.zip
 ```
+Имеем:
+```sh
+ls -l
+```
+-rw-r--r--.  1 root root 11924330 Apr 30 16:04 OpenSSL_1_1_1-stable.zip<br>
+-rw-r--r--.  1 root root  1086865 Nov 16  2021 nginx-1.20.2-1.el8.ngx.src.rpm<br>
+drwxr-xr-x. 19 root root     4096 Sep 11  2023 openssl-OpenSSL_1_1_1-stable<br>
+drwxr-xr-x.  4 root root       34 Apr 30 16:02 rpmbuild<br>
 Поставим все зависимости, чтобы в процессе сборки не было ошибок:
 ```sh
 yum-builddep rpmbuild/SPECS/nginx.spec

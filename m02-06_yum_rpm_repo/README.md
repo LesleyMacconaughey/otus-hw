@@ -140,6 +140,7 @@ systemctl status nginx
 <br>
 Apr 30 16:43:09 centos8-hw06 systemd[1]: Starting nginx - high performance web server...<br>
 Apr 30 16:43:09 centos8-hw06 systemd[1]: Started nginx - high performance web server.<br>
+
 ---
 ## Создем свой репозиторий и размещаем там ранее собранный RPM
 

@@ -89,5 +89,15 @@ systemctl start nginx
 ```sh
 systemctl status nginx
 ```
+---
+## Создем свой репозиторий и размещаем там ранее собранный RPM
+
+```sh
+mkdir /usr/share/nginx/html/repo
+```
+```sh
+cp /root/rpmbuild/RPMS/x86_64/nginx-1.20.2-1.el8.ngx.x86_64.rpm /usr/share/nginx/html/repo/
+```
+
 
 

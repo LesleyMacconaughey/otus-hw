@@ -211,6 +211,8 @@ otus                otus-linux<br>
 ```sh
 yum list | grep otus
 ```
+otus-linux                                       23 kB/s | 2.8 kB     00:00    <br>
+percona-orchestrator.x86_64                                       2:3.2.6-2.el8   <br>
 Так как `NGINX` у нас уже стоит, установим репозиторий `percona-release`:
 ```sh
 yum install percona-orchestrator.x86_64 -y

@@ -96,7 +96,11 @@ vi rpmbuild/SPECS/nginx.spec
 ```sh
 rpmbuild -bb rpmbuild/SPECS/nginx.spec
 ```
-После завершения проверим, что пакеты создались:
+После завершения проверим код возврата:
+```sh
+echo $?
+```
+а также, что пакеты создались:
 ```sh
 ls -la /root/rpmbuild/RPMS/x86_64/
 ```

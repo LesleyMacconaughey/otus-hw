@@ -110,6 +110,9 @@ ls -la /root/rpmbuild/RPMS/x86_64/
 ```sh
 yum localinstall /root/rpmbuild/RPMS/x86_64/nginx-1.20.2-1.el8.ngx.x86_64.rpm
 ```
+Installed:<br>
+  nginx-1:1.20.2-1.el8.ngx.x86_64    <br>                                                             
+Complete!<br>
 ```sh
 systemctl start nginx
 ```

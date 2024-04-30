@@ -104,6 +104,8 @@ echo $?
 ```sh
 ls -la /root/rpmbuild/RPMS/x86_64/
 ```
+-rw-r--r--. 1 root root 2249516 Apr 30 16:40 nginx-1.20.2-1.el8.ngx.x86_64.rpm<br>
+-rw-r--r--. 1 root root 2534064 Apr 30 16:40 nginx-debuginfo-1.20.2-1.el8.ngx.x86_64.rpm<br>
 Установим наш созданный пакет nginx, запустим и проверим его работу :
 ```sh
 yum localinstall /root/rpmbuild/RPMS/x86_64/nginx-1.20.2-1.el8.ngx.x86_64.rpm

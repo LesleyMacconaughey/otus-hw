@@ -12,5 +12,7 @@ https://mirror.yandex.ru/centos/7.9.2009/isos/x86_64/
 Я взял этот:
 ```sh
 https://mirror.yandex.ru/centos/7.9.2009/isos/x86_64/CentOS-7-x86_64-Everything-2207-02.iso
-
 ```
+---
+## Попасть в систему без пароля. Способ 1. init=/bin/sh
+Производим устаовку ВМ Centos 7 из образа и перезагружаем. Во время загрузки, при появлении меню загрузчика grub нажимаем `e`.<br>

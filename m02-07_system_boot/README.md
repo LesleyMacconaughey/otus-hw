@@ -7,12 +7,10 @@
 ---
 ## Настройка вм
 Образ для домашнего задания возьмем отсюда: 
-https://mirrors.xtom.de/centos-altarch/7.9.2009/isos/aarch64/
-http://centos-altarch.mirror.liteserver.nl/7.9.2009/isos/aarch64/
+https://mirror.yandex.ru/centos/7.9.2009/isos/x86_64/
 <br>
 Я взял этот:
 ```sh
-wget https://mirrors.xtom.de/centos-altarch/7.9.2009/isos/aarch64/CentOS-7-aarch64-Minimal-2009.iso
-http://centos-altarch.mirror.liteserver.nl/7.9.2009/isos/aarch64/CentOS-7-aarch64-Everything-2009.iso
+https://mirror.yandex.ru/centos/7.9.2009/isos/x86_64/CentOS-7-x86_64-Everything-2207-02.iso
 
 ```

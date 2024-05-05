@@ -80,3 +80,33 @@ exportfs -r
 ```bash
 exportfs -s
 ```
+## Настройка клиента
+Заходим на сервер
+```bash
+vagrant ssh nfsс
+```
+Переходим в root
+```bash
+sudo su
+```
+Установим утилиты для отладки
+```bash
+yum install -y nfs-utils
+```
+Включаем firewall
+```bash
+systemctl enable firewalld --now; systemctl status firewalld
+```
+Добавляем в `/etc/fstab` строку
+```bash
+echo "192.168.50.10:/srv/share/ /mnt nfs vers=3,proto=udp,noauto,x-systemd.automount 0 0" >> /etc/fstab
+```
+и выполняем
+```bash
+systemctl daemon-reload; systemctl restart remote-fs.target
+```
+В данном случае происходит автоматическая генерация systemd units в каталоге `/run/systemd/generator/`, которые производят монтирование при первом обращении к каталогу `/mnt/`.<br>
+Заходим в директорию `/mnt/` и проверяем успешность монтирования
+```bash
+mount | grep mnt
+```

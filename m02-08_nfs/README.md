@@ -99,7 +99,7 @@ systemctl enable firewalld --now; systemctl status firewalld
 ```
 Добавляем в `/etc/fstab` строку
 ```bash
-echo "192.168.50.10:/srv/share/ /mnt nfs vers=3,proto=udp,noauto,x- systemd.automount 0 0" >> /etc/fstab
+echo "192.168.50.10:/srv/share/ /mnt nfs vers=3,proto=udp,noauto,x-systemd.automount 0 0" >> /etc/fstab
 ```
 и выполняем
 ```bash

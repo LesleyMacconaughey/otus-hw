@@ -76,6 +76,67 @@ Executing: /sbin/dracut -f -v /boot/initramfs-3.10.0-1160.118.1.el7.x86_64.img 3
 ```sh
 reboot
 ```
+После перезагрузки проверяем
+```sh
+vgs
+```
+  VG       #PV #LV #SN Attr   VSize  VFree<br>
+  OtusRoot   1   2   0 wz--n- <9,00g    0 <br>
+VG успешно переименована.
+
+## Добавление модулей в initrd
+Скрипты модулей хранятся в каталоге /usr/lib/dracut/modules.d/. Для того, чтобы добавить свой модуль, создаем там папку с именем 01test:
+```sh
+mkdir /usr/lib/dracut/modules.d/01test
+```
+В нее поместим два скрипта.<br>
+module-setup.sh
+```
+#!/bin/bash
+
+check() {
+    return 0
+}
+
+depends() {
+    return 0
+}
+
+install() {
+    inst_hook cleanup 00 "${moddir}/test.sh"
+}
+```
+и test.sh
+```
+#!/bin/bash
+
+exec 0<>/dev/console 1<>/dev/console 2<>/dev/console
+cat <<'msgend'
+Hello! You are in dracut module!
+ ___________________
+< I'm dracut module >
+ -------------------
+   \
+    \
+        .--.
+       |o_o |
+       |:_/ |
+      //   \ \
+     (|     | )
+    /'\_   _/`\
+    \___)=(___/
+msgend
+sleep 10
+echo " continuing...."
+```
+Пересобираем образ initrd
+```sh
+mkinitrd -f -v /boot/initramfs-$(uname -r).img $(uname -r)
+```
+или
+```sh
+dracut -f -v
+```
 
   
 

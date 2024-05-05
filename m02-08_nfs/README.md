@@ -50,7 +50,7 @@ systemctl enable firewalld --now; systemctl status firewalld
 firewall-cmd --add-service="nfs3" \
              --add-service="rpc-bind" \
              --add-service="mountd" \
-             --permanent; firewall-cmd --reload
+             --permanent & firewall-cmd --reload
 ```
 Запускаем сервер NFS
 ```bash

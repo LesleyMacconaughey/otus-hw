@@ -43,8 +43,7 @@ yum install -y nfs-utils
 ```
 Включаем firewall
 ```bash
-systemctl enable firewalld --now
-systemctl status firewalld
+systemctl enable firewalld --now; systemctl status firewalld
 ```
 Разрешаем в firewall доступ к сервисам NFS
 ```bash

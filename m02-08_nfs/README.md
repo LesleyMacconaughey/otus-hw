@@ -39,7 +39,7 @@ sudo su
 ```
 Установим утилиты для отладки
 ```bash
-yum install nfs-utils
+yum install -y nfs-utils
 ```
 Включаем firewall
 ```bash

@@ -137,6 +137,16 @@ mkinitrd -f -v /boot/initramfs-$(uname -r).img $(uname -r)
 ```sh
 dracut -f -v
 ```
+Я использовал dracut.<br>
+...<br>
+*** Creating initramfs image file '/boot/initramfs-3.10.0-1160.118.1.el7.x86_64.img' done ***<br>
+Проверим, какие модули загружены в образ:
+```sh
+lsinitrd -m /boot/initramfs-$(uname -r).img | grep test
+```
+test<br>
+Перезагрузимся и руками выключим опции `rghb` и `quiet`, после чего увидим результат.
+
 
   
 

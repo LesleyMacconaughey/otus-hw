@@ -53,6 +53,35 @@ touch /.autorelabel
 В строке, начитающейся с linux16, заменяем `ro` на `rw init=/sysroot/bin/sh` и нажимаем сtrl-x для загрузки.<br>
 После загрузки файловая система сразу смонтирована в ржиме `rw` и можем выполнять необходимые действия. 
 
+## Переименовывание VG в системе с LVM
+Посмотрим текущее состояние:
+```sh
+vgs
+```
+  VG     #PV #LV #SN Attr   VSize  VFree<br>
+  centos   1   2   0 wz--n- <9,00g    0 <br>
+Приступим к переименованию:
+```sh
+vgrename centos OtusRoot
+```
+  Volume group "centos" successfully renamed to "OtusRoot"<br>
+Чтобы система определила новое название после перезагрузки правим `/etc/fstab`, `/etc/default/grub`, `/boot/grub2/grub.cfg` и пересоздаем `initrd image`.
+```sh
+mkinitrd -f -v /boot/initramfs-$(uname -r).img $(uname -r)
+```
+Executing: /sbin/dracut -f -v /boot/initramfs-3.10.0-1160.118.1.el7.x86_64.img 3.10.0-1160.118.1.el7.x86_64<br>
+...<br>
+*** Creating initramfs image file '/boot/initramfs-3.10.0-1160.118.1.el7.x86_64.img' done ***<br>
+Перезагружаемся
+```sh
+reboot
+```
+
+  
+
+
+
+
 
 
 

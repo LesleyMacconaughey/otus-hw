@@ -62,8 +62,8 @@ ss -tnplu
 ```
 Cоздаём и настраиваем директорию, которая будет экспортирована в будущем
 ```bash
-mkdir -p /srv/share/upload
-chown -R nfsnobody:nfsnobody /srv/share
+mkdir -p /srv/share/upload & \
+chown -R nfsnobody:nfsnobody /srv/share & \
 chmod 0777 /srv/share/upload
 ```
 Cоздаём в файле `/etc/exports` структуру, которая позволит экспортировать ранее созданную директорию

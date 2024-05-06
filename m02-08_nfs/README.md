@@ -120,6 +120,7 @@ vagrant up
 ```
 vagrant ssh nfsc
 ```
+```bash
 ls -l /mnt
 ```
 В случае успеха увидим папку `upload`.

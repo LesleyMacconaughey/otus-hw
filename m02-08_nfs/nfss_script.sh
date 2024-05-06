@@ -5,7 +5,8 @@ systemctl enable firewalld --now
 firewall-cmd --add-service="nfs3" \
              --add-service="rpc-bind" \
              --add-service="mountd" \
-             --permanent & firewall-cmd --reload
+             --permanent
+firewall-cmd --reload
 systemctl enable nfs --now
 mkdir -p /srv/share/upload 
 chown -R nfsnobody:nfsnobody /srv/share 

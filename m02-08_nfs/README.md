@@ -110,3 +110,16 @@ systemctl daemon-reload; systemctl restart remote-fs.target
 ```bash
 mount | grep mnt
 ```
+## Автоматическая настройка NFS при создании ВМ
+Добавим в Vagrantfile строки запуска скриптов `nfss.vm.provision "shell", path: "nfss_script.sh"`, `nfsc.vm.provision "shell", path: "nfsc_script.sh"` и создадим сами скрипты.
+Cоздадим ВМ.
+```bash
+vagrant up
+```
+Зайдем на машину клиент и убедимся, что NFS смонтирована
+```
+vagrant ssh nfsc
+```
+ls -l /mnt
+```
+В случае успеха увидим папку `upload`.

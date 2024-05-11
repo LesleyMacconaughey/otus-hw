@@ -51,3 +51,28 @@ WORD="ALERT"
 LOG=/var/log/watchlog.log
 EOF
 ```
+Cоздаем файл лога /var/log/watchlog.log
+```sh
+touch /var/log/watchlog.log
+```
+Создадим скрипт (команда logger отправляет лог в системный журнал)
+```bash
+cat << EOF >> /opt/watchlog.sh
+#!/bin/bash
+
+WORD=$1
+LOG=$2
+DATE=`date`
+
+if grep $WORD $LOG &> /dev/null
+then
+logger "$DATE: I found word, Master!"
+else
+exit 0
+fi
+EOF
+```
+Добавим права на запуск файла:
+```bash
+chmod +x /opt/watchlog.sh
+```

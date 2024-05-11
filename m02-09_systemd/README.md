@@ -107,6 +107,10 @@ EOF
 ```bash
 systemctl daemon-reload
 ```
+Стартуем:
+```bash
+systemctl start watchlog.timer
+```
 И убедимся в результате:
 ```bash
 tail -f /var/log/messages

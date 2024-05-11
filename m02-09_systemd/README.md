@@ -39,3 +39,15 @@ vagrant ssh
 ```bash
 sudo su
 ```
+## Создание сервиса watchlog
+Создаём файл с конфигурацией для сервиса в директории /etc/sysconfig:
+```bash
+cat << EOF >> /etc/sysconfig/watchlog
+# Configuration file for my watchlog service
+# Place it to /etc/sysconfig
+
+# File and word in that file that we will be monit
+WORD="ALERT"
+LOG=/var/log/watchlog.log
+EOF
+```

@@ -88,3 +88,26 @@ EnvironmentFile=/etc/sysconfig/watchlog
 ExecStart=/opt/watchlog.sh $WORD $LOG
 EOF
 ```
+Создадим юнит для таймера:
+```bash
+cat << EOF >> /etc/systemd/system/watchlog.timer
+[Unit]
+Description=Run watchlog script every 30 second
+
+[Timer]
+# Run every 30 second
+OnUnitActiveSec=30
+Unit=watchlog.service
+
+[Install]
+WantedBy=multi-user.targettart
+EOF
+```
+Перечитаем:
+```bash
+systemctl daemon-reload
+```
+И убедимся в результате:
+```bash
+tail -f /var/log/messages
+```

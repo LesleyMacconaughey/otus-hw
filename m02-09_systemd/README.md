@@ -76,3 +76,15 @@ EOF
 ```bash
 chmod +x /opt/watchlog.sh
 ```
+Создадим юнит для сервиса:
+```bash
+cat << EOF >> 
+[Unit]
+Description=My watchlog service
+
+[Service]
+Type=oneshot
+EnvironmentFile=/etc/sysconfig/watchlog
+ExecStart=/opt/watchlog.sh $WORD $LOG
+EOF
+```

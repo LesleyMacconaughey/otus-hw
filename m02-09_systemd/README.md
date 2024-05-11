@@ -29,3 +29,13 @@ Vagrant.configure("2") do |config|
   end
 EOF
 ```
+Запустим ВМ, подключимся и перейдем в root:
+```sh
+vagrant up
+```
+```bash
+vagrant ssh
+```
+```bash
+sudo su
+```

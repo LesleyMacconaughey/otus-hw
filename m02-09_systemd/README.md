@@ -78,7 +78,7 @@ chmod +x /opt/watchlog.sh
 ```
 Создадим юнит для сервиса:
 ```bash
-cat << EOF >> 
+cat << EOF >> /etc/systemd/system/watchlog.service
 [Unit]
 Description=My watchlog service
 

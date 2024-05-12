@@ -1,0 +1,11 @@
+---
+- name: find_alert_setup
+  hosts: hw09
+  tasks:
+    - name: copy files
+    copy:
+    src: files/watchlog
+    dest: /etc/sysconfig/
+    owner: root
+    group: root
+    mode: '0644' 

@@ -1,6 +1,6 @@
 ---
 - name: find_alert_setup
-  hosts: hw09
+  hosts: centos8-hw09
   tasks:
 
     - name: copy settings

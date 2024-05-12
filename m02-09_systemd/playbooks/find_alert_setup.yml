@@ -53,10 +53,10 @@
       systemd_service:
         daemon_reload: yes
 
-    - name: Enable a timer unit for dnf-automatic
+    - name: Enable a timer unit
       become: true
       become_method: sudo
       systemd_service:
-      name: watchlog.timer
-      state: started
+        name: watchlog.timer
+        state: started
  

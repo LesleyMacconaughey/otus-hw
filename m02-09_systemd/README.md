@@ -40,24 +40,21 @@ vagrant ssh
 sudo su
 ```
 ## Создание сервиса watchlog
-Создаём файл с конфигурацией для сервиса в директории /etc/sysconfig:
+Создаём файл `/etc/sysconfig/watchlog` с конфигурацией для сервиса:
 ```bash
-cat << EOF >> /etc/sysconfig/watchlog
 # Configuration file for my watchlog service
 # Place it to /etc/sysconfig
 
 # File and word in that file that we will be monit
 WORD="ALERT"
 LOG=/var/log/watchlog.log
-EOF
 ```
 Cоздаем файл лога /var/log/watchlog.log
 ```sh
 touch /var/log/watchlog.log
 ```
-Создадим скрипт (команда logger отправляет лог в системный журнал)
+Создадим скрипт `/opt/watchlog.sh` (команда logger отправляет лог в системный журнал)
 ```bash
-cat << EOF >> /opt/watchlog.sh
 #!/bin/bash
 
 WORD=$1
@@ -70,15 +67,13 @@ logger "$DATE: I found word, Master!"
 else
 exit 0
 fi
-EOF
 ```
 Добавим права на запуск файла:
 ```bash
 chmod +x /opt/watchlog.sh
 ```
-Создадим юнит для сервиса:
+Создадим юнит для сервиса `/etc/systemd/system/watchlog.service`:
 ```bash
-cat << EOF >> /etc/systemd/system/watchlog.service
 [Unit]
 Description=My watchlog service
 
@@ -86,11 +81,9 @@ Description=My watchlog service
 Type=oneshot
 EnvironmentFile=/etc/sysconfig/watchlog
 ExecStart=/opt/watchlog.sh $WORD $LOG
-EOF
 ```
-Создадим юнит для таймера:
+Создадим юнит для таймера `/etc/systemd/system/watchlog.timer`:
 ```bash
-cat << EOF >> /etc/systemd/system/watchlog.timer
 [Unit]
 Description=Run watchlog script every 30 second
 
@@ -101,7 +94,6 @@ Unit=watchlog.service
 
 [Install]
 WantedBy=multi-user.targettart
-EOF
 ```
 Перечитаем:
 ```bash

@@ -1,0 +1,4 @@
+---
+- name: ping check
+  hosts: hw09
+  ansible.builtin.ping:

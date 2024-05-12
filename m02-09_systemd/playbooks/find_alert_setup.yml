@@ -3,12 +3,12 @@
   hosts: hw09
   tasks:
     - name: copy files
+      become: true
+      become_method: sudo
+      become_user: root
       copy:
         src: files/watchlog
         dest: /etc/sysconfig/
         owner: root
         group: root
         mode: '0644'
-      become: true
-      become_method: sudo
-      become_user: root

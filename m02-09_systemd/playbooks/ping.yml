@@ -1,4 +1,7 @@
 ---
 - name: ping check
   hosts: hw09
-  ansible.builtin.ping:
+  tasks:
+    - name: ping hw-09
+    ansible.builtin.ping:
+

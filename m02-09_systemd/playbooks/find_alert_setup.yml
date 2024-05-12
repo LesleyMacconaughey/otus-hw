@@ -14,6 +14,18 @@
         group: root
         mode: '0644'
 
+    - name: copy logfile
+      become: true
+      become_method: sudo
+      become_user: root
+      copy:
+        src: files/watchlog.log
+        dest: /var/log/
+        owner: root
+        group: root
+        mode: '0644'
+
+
     - name: copy script
       become: true
       become_method: sudo

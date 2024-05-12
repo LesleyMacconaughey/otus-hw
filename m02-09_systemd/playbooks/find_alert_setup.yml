@@ -65,6 +65,13 @@
       systemd_service:
         daemon_reload: yes
 
+    - name: Enable a service unit
+      become: true
+      become_method: sudo
+      systemd_service:
+        name: watchlog.service
+        state: started
+
     - name: Enable a timer unit
       become: true
       become_method: sudo

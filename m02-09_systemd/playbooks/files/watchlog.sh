@@ -1,7 +1,9 @@
 #!/bin/bash
 
-WORD=$1
-LOG=$2
+#WORD=$1
+WORD="ALERT"
+#LOG=$2
+LOG=/var/log/watchlog.log
 DATE=`date`
 
 if grep $WORD $LOG &> /dev/null

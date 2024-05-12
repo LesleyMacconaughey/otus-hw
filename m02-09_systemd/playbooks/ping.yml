@@ -3,5 +3,5 @@
   hosts: hw09
   tasks:
     - name: ping hw-09
-    ansible.builtin.ping:
+      ping:
 

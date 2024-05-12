@@ -3,9 +3,9 @@
   hosts: hw09
   tasks:
     - name: copy files
-    copy:
-      src: files/watchlog
-      dest: /etc/sysconfig/
-      owner: root
-      group: root
-      mode: '0644' 
+      copy:
+        src: files/watchlog
+        dest: /etc/sysconfig/
+        owner: root
+        group: root
+        mode: '0644' 

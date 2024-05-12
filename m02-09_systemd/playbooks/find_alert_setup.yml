@@ -46,3 +46,17 @@
         owner: root
         group: root
         mode: '0644'
+
+    - name: Reload systemd daemon
+      become: true
+      become_method: sudo
+      systemd_service:
+        daemon_reload: yes
+
+    - name: Enable a timer unit for dnf-automatic
+      become: true
+      become_method: sudo
+      systemd_service:
+      name: watchlog.timer
+      state: started
+ 

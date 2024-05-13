@@ -3,7 +3,7 @@
 Выполнить следующие задания и подготовить развёртывание результата выполнения с использованием Vagrant и Vagrant shell provisioner:
 
 - Написать service, который будет раз в 30 секунд мониторить лог на предмет наличия ключевого слова (файл лога и ключевое слово должны задаваться в /etc/sysconfig или в /etc/default);<br>
-- Установить spawn-fcgi и переписать init-скрипт на unit-файл (имя service должно называться так же: spawn-fcgi);<br>
+- Установить spawn-fcgi и переписать init-скрипт на unit-файл (имя service должно называться так же: spawn-fcgi;<br>
 - Дополнить unit-файл httpd (он же apache2) возможностью запустить несколько инстансов сервера с разными конфигурационными файлами.<br>
 ---
 ## Создание стенда
@@ -29,81 +29,26 @@ Vagrant.configure("2") do |config|
   end
 EOF
 ```
-Запустим ВМ, подключимся и перейдем в root:
+Запустим ВМ:
 ```sh
 vagrant up
 ```
+## Создание сервиса watchlog
+Из директории с Vagrantfile запустим playbook
+```bash
+ansible-playbook playbooks/find_alert_setup.yml
+```
+После успешного завершения работы плейбука подключимся
 ```bash
 vagrant ssh
 ```
-```bash
-sudo su
-```
-## Создание сервиса watchlog
-Создаём файл `/etc/sysconfig/watchlog` с конфигурацией для сервиса:
-```bash
-# Configuration file for my watchlog service
-# Place it to /etc/sysconfig
-
-# File and word in that file that we will be monit
-WORD="ALERT"
-LOG=/var/log/watchlog.log
-```
-Cоздаем файл лога /var/log/watchlog.log
-```sh
-touch /var/log/watchlog.log
-```
-Создадим скрипт `/opt/watchlog.sh` (команда logger отправляет лог в системный журнал)
-```bash
-#!/bin/bash
-
-WORD=$1
-LOG=$2
-DATE=`date`
-
-if grep $WORD $LOG &> /dev/null
-then
-logger "$DATE: I found word, Master!"
-else
-exit 0
-fi
-```
-Добавим права на запуск файла:
-```bash
-chmod +x /opt/watchlog.sh
-```
-Создадим юнит для сервиса `/etc/systemd/system/watchlog.service`:
-```bash
-[Unit]
-Description=My watchlog service
-
-[Service]
-Type=oneshot
-EnvironmentFile=/etc/sysconfig/watchlog
-ExecStart=/opt/watchlog.sh $WORD $LOG
-```
-Создадим юнит для таймера `/etc/systemd/system/watchlog.timer`:
-```bash
-[Unit]
-Description=Run watchlog script every 30 second
-
-[Timer]
-# Run every 30 second
-OnUnitActiveSec=30
-Unit=watchlog.service
-
-[Install]
-WantedBy=multi-user.targettart
-```
-Перечитаем:
-```bash
-systemctl daemon-reload
-```
-Стартуем:
-```bash
-systemctl start watchlog.timer
-```
-И убедимся в результате:
+и убедимся в результате:
 ```bash
 tail -f /var/log/messages
 ```
+Регулярное появление сообщения `centos8s root[6827]: ... : I found word, Master!` говорит о корректной работе созданных таймера и сервиса.<br>
+После проверки можно выйти из консоли ВМ и создать ВМ заново.
+```bash
+vagrant destroy -f && rm -R .vagrant/ && vagrant up
+```
+## Установить spawn-fcgi и переписать init-скрипт на unit-файл (имя service должно называться так же: spawn-fcgi

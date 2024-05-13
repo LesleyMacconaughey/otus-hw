@@ -11,6 +11,7 @@ Vagrant.configure("2") do |config|
   config.vm.network "public_network"
   config.vm.provision "ansible" do |ansible|
    ansible.playbook = "playbooks/find_alert_setup.yml"
+   ansible.verbose = "-vvv"
    ansible.inventory_path = "hosts"
   end   
   config.vm.provider "virtualbox" do |vb|

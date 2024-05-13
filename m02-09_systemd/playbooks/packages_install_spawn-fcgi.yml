@@ -15,6 +15,7 @@
           - spawn-fcgi
           - php
           - php-cli
-          - mod_fcgid httpd
+          - mod_fcgid
+          - httpd
         state: present
  

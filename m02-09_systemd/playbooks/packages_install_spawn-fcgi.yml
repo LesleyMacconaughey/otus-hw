@@ -26,4 +26,21 @@
         owner: root
         group: root
         mode: '0644'
+    
+    - name: copy unit file
+      copy:
+        src: files/spawn-fcgi.service
+        dest: /etc/systemd/system/
+        owner: root
+        group: root
+        mode: '0644'
+
+    - name: Reload systemd daemon
+      systemd_service:
+        daemon_reload: yes
+    
+    - name: start spawn-fcgi unit
+      systemd_service:
+        name: spawn-fcgi.service
+        state: started
  

@@ -49,7 +49,7 @@
         group: root
         mode: '0644'
 
-#    - name: copy timer
+    - name: copy timer
 #      become: true
 #      become_method: sudo
 #      become_user: root 

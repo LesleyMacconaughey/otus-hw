@@ -73,9 +73,9 @@
         state: started
  
      - name: Enable a service unit
-      become: true
+       become: true
 #      become_method: sudo
-      systemd_service:
+       systemd_service:
         name: watchlog.service
         state: started
 

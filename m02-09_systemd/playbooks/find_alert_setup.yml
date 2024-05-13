@@ -1,6 +1,6 @@
 ---
 - name: find_alert_setup
-  hosts: centos8-hw09
+  hosts: all #centos8-hw09
   become: true
   tasks:
 

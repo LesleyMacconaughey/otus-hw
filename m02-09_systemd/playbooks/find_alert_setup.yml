@@ -1,10 +1,11 @@
 ---
 - name: find_alert_setup
   hosts: centos8-hw09
+  become: true
   tasks:
 
     - name: copy settings
-      become: true
+#      become: true
 #      become_method: sudo
 #      become_user: root
       copy:
@@ -15,7 +16,7 @@
         mode: '0644'
 
     - name: copy logfile
-      become: true
+#      become: true
 #      become_method: sudo
 #      become_user: root
       copy:
@@ -27,7 +28,7 @@
 
 
     - name: copy script
-      become: true
+#      become: true
 #      become_method: sudo
 #      become_user: root
       copy:
@@ -38,7 +39,7 @@
         mode: '0744'
 
     - name: copy service
-      become: true
+#      become: true
 #      become_method: sudo
 #      become_user: root
       copy:
@@ -48,8 +49,8 @@
         group: root
         mode: '0644'
 
-    - name: copy timer
-      become: true
+#    - name: copy timer
+#      become: true
 #      become_method: sudo
 #      become_user: root 
       copy:
@@ -60,22 +61,21 @@
         mode: '0644'
 
     - name: Reload systemd daemon
-      become: true
+#      become: true
 #      become_method: sudo
       systemd_service:
         daemon_reload: yes
 
     - name: Enable a timer unit
-      become: true
+#      become: true
 #      become_method: sudo
       systemd_service:
         name: watchlog.timer
         state: started
  
     - name: Enable a service unit
-      become: true
+#      become: true
 #      become_method: sudo
       systemd_service:
         name: watchlog.service
         state: started
-

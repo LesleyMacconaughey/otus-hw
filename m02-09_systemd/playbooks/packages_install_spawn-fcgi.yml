@@ -1,0 +1,20 @@
+---
+- name: packages install for spawn-fcgi
+  hosts: centos8-hw09
+  become: true
+  tasks:
+
+    - name: installing epel
+      yum:
+        name: epel-release
+        state: present
+
+    - name: installing packages
+      yum:
+        name:
+          - spawn-fcgi
+          - php
+          - php-cli
+          - mod_fcgid httpd
+        state: present
+ 

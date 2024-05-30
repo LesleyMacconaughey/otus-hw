@@ -48,7 +48,7 @@
         mode: '0644'
     
     - name: moving original conf file
-      raw: rename /etc/httpd/conf/httpd.conf /etc/httpd/conf/httpd.conf.BAK
+      raw: mv -f /etc/httpd/conf/httpd.conf /etc/httpd/conf/httpd.conf.BAK
 
     - name: Reload systemd daemon
       systemd_service:

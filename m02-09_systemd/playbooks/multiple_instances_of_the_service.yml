@@ -17,7 +17,15 @@
     
     - name: copy files with options
       copy:
-        src: files/httpd-first files/httpd-second
+        src: files/httpd-first
+        dest: /etc/sysconfig/
+        owner: root
+        group: root
+        mode: '0644'
+    
+    - name: copy files with options
+      copy:
+        src: files/httpd-second
         dest: /etc/sysconfig/
         owner: root
         group: root
@@ -25,11 +33,22 @@
     
     - name: copy httpd congig files
       copy:
-        src: files/first.conf files/second.conf
+        src: files/first.conf
         dest: /etc/httpd/conf/
         owner: root
         group: root
         mode: '0644'
+    
+        - name: copy httpd congig files
+      copy:
+        src: files/second.conf
+        dest: /etc/httpd/conf/
+        owner: root
+        group: root
+        mode: '0644'
+    
+    - name: moving original conf file
+      raw: mv /etc/httpd/conf/httpd.conf /etc/httpd/conf/httpd.conf.BAK
 
     - name: Reload systemd daemon
       systemd_service:

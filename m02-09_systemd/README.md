@@ -51,4 +51,44 @@ tail -f /var/log/messages
 ```bash
 vagrant destroy -f && rm -R .vagrant/ && vagrant up
 ```
-## Установить spawn-fcgi и переписать init-скрипт на unit-файл (имя service должно называться так же: spawn-fcgi
+## Установка spawn-fcgi и переписывание init-скрипта на unit-файл (имя service должно называться так же: spawn-fcgi)
+Из директории с Vagrantfile запустим playbook
+```bash
+ansible-playbook playbooks/packages_install_spawn-fcgi.yml
+```
+После успешного завершения работы плейбука подключимся
+```bash
+vagrant ssh
+```
+И проверим статус
+```bash
+systemctl status spawn-fcgi
+```
+Увидим подобное:<br>
+● spawn-fcgi.service - Spawn-fcgi startup service by Otus<br>
+   Loaded: loaded (/etc/systemd/system/spawn-fcgi.service; disabled; <br>
+   vendor preset: disabled)<br>
+   Active: active (running) since Thu 2024-05-30 13:21:04 UTC; 10min ago<br>
+ Main PID: 6936 (php-cgi)<br>
+    Tasks: 33 (limit: 4694)<br>
+   Memory: 19.9M<br>
+   CGroup: /system.slice/spawn-fcgi.service<br>
+           ├─6936 /usr/bin/php-cgi<br>
+           ├─6938 /usr/bin/php-cgi<br>
+
+##  Запуск нескольких инстансов сервиса httpd
+Запустим плейбук
+```bash
+ansible-playbook playbooks/multiple_instances_of_the_service.yml
+```
+После выполнения на виртуальной машине запустим 
+```bash
+systemctl start httpd@first
+```
+```bash
+systemctl start httpd@second
+```
+И проверим слушаются ли порты указанные для разных сервисов (80 и 8080)
+```
+ss -tnulp | grep httpd
+```

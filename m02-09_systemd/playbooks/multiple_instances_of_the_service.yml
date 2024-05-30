@@ -39,7 +39,7 @@
         group: root
         mode: '0644'
     
-        - name: copy httpd congig files
+    - name: copy httpd congig files
       copy:
         src: files/second.conf
         dest: /etc/httpd/conf/

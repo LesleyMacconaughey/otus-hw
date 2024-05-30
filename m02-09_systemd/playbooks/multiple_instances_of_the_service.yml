@@ -4,10 +4,10 @@
   become: true
   tasks:
 
-    - name: installing epel
-      yum:
-        name: epel-release
-        state: present
+#    - name: installing epel
+#      yum:
+#        name: epel-release
+#        state: present
 
     - name: installing packages
       yum:

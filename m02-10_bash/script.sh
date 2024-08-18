@@ -30,7 +30,7 @@ HTTP_CODES=$(awk -v start="$START_TIME" '$4 > start {print $9}' "$LOG_FILE" | so
     echo
     echo "Список HTTP кодов ответа:"
     echo "$HTTP_CODES"
-} > | sendmail "$EMAIL"
+}  | sendmail "$EMAIL"
 
 # Запрет одновременного запуска (ввести свой путь до скрипта)
 flock -n /tmp/script.lock -c "/home/dmitriy/hw/m02-10_bash/script.sh"

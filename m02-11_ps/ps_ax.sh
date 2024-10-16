@@ -1,7 +1,6 @@
 #!/bin/bash
 
 # Получить список всех процессов
-# processes=$(find /proc -maxdepth 1 -type d | cut -c3- |grep -o '[0-9]*' | sort -n)
 processes=$(find /proc/[1-9]* -maxdepth 0 | cut -d '/' -f 3 | sort -n)
 
 # Заголовки столбцов

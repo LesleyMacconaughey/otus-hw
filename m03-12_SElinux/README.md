@@ -1,33 +1,58 @@
-# Практика с SELinux. Домашнее задание.
+# Практика с SELinux. Домашнее задание
 
-## Задание 1. Запустить nginx на нестандартном порту 3-мя разными способами:
+## Задание 1. Запустить nginx на нестандартном порту 3-мя разными способами
+
 Для выполнения задания будем использовать almalinux/9 версии 9.4.20240805
-```
+
+```bash
 vagrant init almalinux/9 --box-version 9.4.20240805
 ```
-```
+
+```bash
 vagrant up
 ```
-```
+
+```bash
 vagrant ssh
 ```
+
 Действия выполняем под root
-```
+
+```bash
 sudo su
 ```
+
 Для работы с SElinux Установим необходимые пакеты
-```
+
+```bash
 yum install -y setroubleshoot-server selinux-policy-mls setools-console policycoreutils-newrole policycoreutils-python-utils
 ```
-```
+
+```bash
 dnf -y install setroubleshoot-server
 ```
+
 Для выполнения задания установим nginx
-```
+
+```bash
 yum install -y nginx
 ```
+
 ### Способ 1. Переключатели setsebool
 
+После установки проверим файл настроек и запустим nginx
+
+```bash
+nginx -t && systemctl start nginx.service
+```
+
+Убедимся что nginx запустился
+
+```bash
+systemctl status nginx.service
+```
+
+Изменим порт
 
 
 ### Способ 2. добавление нестандартного порта в имеющийся тип;

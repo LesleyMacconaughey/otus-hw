@@ -79,7 +79,6 @@ nginx -t && systemctl restart nginx.service
 ![alt text](image-6.png)
 
 Настройки корректны, но nginx не запустился
-
 Находим в логах (/var/log/audit/audit.log) информацию о блокировании порта
 
 ### Способ 2. добавление нестандартного порта в имеющийся тип

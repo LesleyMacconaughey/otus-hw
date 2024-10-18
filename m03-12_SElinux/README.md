@@ -60,6 +60,8 @@ nginx -t && systemctl start nginx.service
 systemctl status nginx.service
 ```
 
+![alt text](image-2.png)
+
 Изменим порт
 
 

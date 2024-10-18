@@ -68,7 +68,7 @@ systemctl status nginx.service
 vi /etc/nginx/nginx.conf
 ```
 
-![alt text](image-5.png)
+![alt text](image-10.png)
 
 Проверим файл настроек и перезапустим nginx
 
@@ -76,10 +76,27 @@ vi /etc/nginx/nginx.conf
 nginx -t && systemctl restart nginx.service
 ```
 
-![alt text](image-6.png)
+![alt text](image-11.png)
 
 Настройки корректны, но nginx не запустился
+
 Находим в логах (/var/log/audit/audit.log) информацию о блокировании порта
+
+```bash
+cat /var/log/audit/audit.log | grep type=AVC
+```
+
+![alt text](image-12.png)
+
+Копируем время, в которое был записан этот лог, и, с помощью утилиты audit2why смотрим причину
+
+```bash
+grep 1729236508.383:910 /var/log/audit/audit.log | audit2why
+```
+
+![alt text](image-13.png)
+
+
 
 ### Способ 2. добавление нестандартного порта в имеющийся тип
 

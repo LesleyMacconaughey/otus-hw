@@ -44,7 +44,7 @@ yum install -y nginx
 getenforce
 ```
 
-![alt text](image.png)
+![alt text](image-1.png)
 
 ### Способ 1. Переключатели setsebool
 

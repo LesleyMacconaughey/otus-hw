@@ -40,7 +40,7 @@ yum install -y nginx
 
 Проверим режим работы SELinux
 
-```
+```bash
 getenforce
 ```
 
@@ -64,7 +64,7 @@ systemctl status nginx.service
 
 Изменим порт и отключим IPv6
 
-```
+```bash
 vi /etc/nginx/nginx.conf
 ```
 
@@ -80,7 +80,10 @@ nginx -t && systemctl restart nginx.service
 
 Настройки корректны, но nginx не запустился
 
-### Способ 2. добавление нестандартного порта в имеющийся тип;
+Находим в логах (/var/log/audit/audit.log) информацию о блокировании порта
+
+### Способ 2. добавление нестандартного порта в имеющийся тип
+
 
 
 

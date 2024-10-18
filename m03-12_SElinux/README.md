@@ -38,6 +38,14 @@ dnf -y install setroubleshoot-server
 yum install -y nginx
 ```
 
+Проверим режим работы SELinux
+
+```
+getenforce
+```
+
+![alt text](image.png)
+
 ### Способ 1. Переключатели setsebool
 
 После установки проверим файл настроек и запустим nginx

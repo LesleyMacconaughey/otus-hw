@@ -67,8 +67,18 @@ systemctl status nginx.service
 ```
 vi /etc/nginx/nginx.conf
 ```
-![alt text](image-3.png)
 
+![alt text](image-5.png)
+
+Проверим файл настроек и перезапустим nginx
+
+```bash
+nginx -t && systemctl restart nginx.service
+```
+
+![alt text](image-6.png)
+
+Настройки корректны, но nginx не запустился
 
 ### Способ 2. добавление нестандартного порта в имеющийся тип;
 

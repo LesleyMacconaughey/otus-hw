@@ -62,7 +62,12 @@ systemctl status nginx.service
 
 ![alt text](image-2.png)
 
-Изменим порт
+Изменим порт и отключим IPv6
+
+```
+vi /etc/nginx/nginx.conf
+```
+![alt text](image-3.png)
 
 
 ### Способ 2. добавление нестандартного порта в имеющийся тип;

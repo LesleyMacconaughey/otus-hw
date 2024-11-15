@@ -96,6 +96,32 @@ grep 1729236508.383:910 /var/log/audit/audit.log | audit2why
 
 ![alt text](image-13.png)
 
+Исходя из вывода утилиты, мы видим, что нам нужно поменять параметр nis_enabled. Выыод команды пустой, возможно прошло успешно. Проверим
+
+```
+nginx -t && systemctl restart nginx.service
+```
+![alt text](image-1.png)
+
+```
+systemctl status nginx.service
+```
+![alt text](image-14.png)
+
+Проверим с помощью curl
+
+```
+curl localhost:4881
+```
+![alt text](image-15.png)
+
+Проверить статус параметра можно с помощью команды
+```
+getsebool -a | grep nis_enabled
+```
+![alt text](image-16.png)
+
+
 
 
 ### Способ 2. добавление нестандартного порта в имеющийся тип

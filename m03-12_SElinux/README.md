@@ -121,15 +121,100 @@ getsebool -a | grep nis_enabled
 ```
 ![alt text](image-16.png)
 
+Вернём запрет работы nginx на порту 4881 обратно. Для этого отключим nis_enabled
+```
+setsebool -P nis_enabled off
+```
+![alt text](image-17.png)
 
-
+После отключения nis_enabled служба nginx снова не запустилась.
 
 ### Способ 2. добавление нестандартного порта в имеющийся тип
+Поиск имеющегося типа, для http трафика
+```
+semanage port -l | grep http
+```
+![alt text](image-18.png)
 
+Добавим порт в тип http_port_t (если все успешно, вывод комманды пустой)
+```
+semanage port -a -t http_port_t -p tcp 4881
+```
+Проверим, что порт добавлен
+```
+semanage port -l | grep  http_port_t
+```
+![alt text](image-19.png)
 
+Перезапустим nginx
+```
+nginx -t && systemctl restart nginx.service
+```
+![alt text](image-20.png)
 
+Убедимся, что служба запущена
+![alt text](image-21.png)
+
+Удалить нестандартный порт из имеющегося типа можно с помощью команды
+```
+semanage port -d -t http_port_t -p tcp 4881
+```
+Перезапуск завершится с ошибкой
+```
+nginx -t && systemctl restart nginx.service
+```
+![alt text](image-22.png)
 
 ### Способ 3. формирование и установка модуля SELinux.
+
+Попробуем запустить nginx
+
+```
+systemctl start nginx.service
+```
+
+Посмотрим логи SELinux, которые относятся к nginx
+
+```
+grep nginx /var/log/audit/audit.log
+```
+![alt text](image-23.png)
+
+Воспользуемся утилитой audit2allow для того, чтобы на основе логов SELinux сделать модуль, разрешающий работу nginx на нестандартном порту
+
+```
+grep nginx /var/log/audit/audit.log | audit2allow -M nginx
+```
+![alt text](image-24.png)
+
+Audit2allow сформировал модуль, и сообщил нам команду, с помощью которой можно применить данный модуль
+
+```
+semodule -i nginx.pp
+```
+После выполнения комманды попробуем снова запустить nginx
+
+```
+systemctl start nginx.service
+```
+Проверим
+```
+systemctl status nginx.service
+```
+![alt text](image-25.png)
+
+Просмотр всех установленных модулей
+```
+semodule -l
+```
+
+Для удаления модуля воспользуемся командой
+```
+semodule -r nginx
+```
+
+
+
 
 
 К сдаче:

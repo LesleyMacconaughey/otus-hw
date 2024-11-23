@@ -213,16 +213,133 @@ semodule -l
 semodule -r nginx
 ```
 
+## Задание 2. Обеспечить работоспособность приложения при включенном selinux
 
+Развернем предложенный стенд
+```
+git clone https://github.com/mbfx/otus-linux-adm.git
+```
 
+```
+cd otus-linux-adm/selinux_dns_problems/
+```
+Развернём 2 ВМ с помощью vagrant. Для доступа вм centos7 к репозиториям дополним Vagrantfile
 
+```
+  config.vm.provision "changing repo", type: "shell", inline: "repo_file=/etc/yum.repos.d/CentOS-Base.repo; cp ${repo_file} ~/CentOS-Base.repo.backup; sudo sed -i s/#baseurl/baseurl/ ${repo_file}; sudo sed -i s/mirrorlist.centos.org/vault.centos.org/ ${repo_file}; sudo sed -i s/mirror.centos.org/vault.centos.org/ ${repo_file}; sudo yum clean all"
+```
+Для совместимости дополним Vagrantfile
 
-К сдаче:
-README с описанием каждого решения (скриншоты и демонстрация приветствуются).
+```
+ansible.compatibility_mode = "2.0"
+````
 
-2. Обеспечить работоспособность приложения при включенном selinux.
-развернуть приложенный стенд https://github.com/mbfx/otus-linux-adm/tree/master/selinux_dns_problems;
-выяснить причину неработоспособности механизма обновления зоны (см. README);
-предложить решение (или решения) для данной проблемы;
-выбрать одно из решений для реализации, предварительно обосновав выбор;
-реализовать выбранное решение и продемонстрировать его работоспособность.
+Запустим стенд
+
+```
+vagrant up
+```
+
+![alt text](image-26.png)
+
+Подключаемся к клиенту
+
+```
+vagrant ssh client
+```
+![alt text](image-27.png)
+
+Пробуем внести изменения в зону
+
+```
+nsupdate -k /etc/named.zonetransfer.key
+```
+
+![alt text](image-28.png)
+
+Посмотрим логи SELinux. Для этого воспользуемся утилитой audit2why
+
+```
+cat /var/log/audit/audit.log | audit2why
+```
+![alt text](image-29.png)
+
+Ошибки отсутствуют
+
+Не закрывая сессию на клиенте, подключимся к серверу ns01 и проверим логи SELinux
+```
+cat /var/log/audit/audit.log | audit2why
+```
+
+![alt text](image-30.png)
+
+В логах мы видим, что ошибка в контексте безопасности. Вместо типа named_t используется тип etc_t. Проверим данную проблему в каталоге /etc/named
+
+Проверим проблему в каталоге /etc/named
+
+```
+ls -laZ /etc/named
+```
+
+![alt text](image-31.png)
+
+Контекст безопасности неправильный. Проблема заключается в том, что конфигурационные файлы лежат в другом каталоге. Посмотреть в каком каталоги должны лежать, файлы, чтобы на них распространялись правильные политики SELinux можно с помощью команды
+
+```
+sudo semanage fcontext -l | grep named
+```
+![alt text](image-32.png)
+
+Изменим тип контекста безопасности для каталога /etc/named
+
+```
+sudo chcon -R -t named_zone_t /etc/named
+```
+
+Проверим
+
+```
+ls -laZ /etc/named
+```
+
+![alt text](image-33.png)
+
+named_zone_t - Изменения применились. Снова вносим изменения на клиенте
+
+![alt text](image-34.png)
+
+Ошибка. Смотрим лог на клиенте. Ошибок нет
+
+Смотрим лог сервера:
+
+```
+cat /var/log/audit/audit.log | audit2why
+```
+
+![alt text](image-35.png)
+
+Требуется поменять параметр named_write_master_zones (выполнение команды займет время)
+
+```
+setsebool -P named_write_master_zones 1
+```
+Снова пробуем вносить изменения на клиенте
+
+![alt text](image-36.png)
+
+Прошло успешно. Проверим с помощью `dig`
+
+```
+dig www.ddns.lab
+```
+
+![alt text](image-37.png)
+
+Изменения применились. Перезагрузим хосты и ещё раз сделаем запрос с помощью `dig`
+
+```
+dig @192.168.50.10 www.ddns.lab
+```
+![alt text](image-38.png)
+
+После перезагрузки настройки сохранились. Для того, чтобы вернуть правила обратно, можно ввести команду: restorecon -v -R /etc/named

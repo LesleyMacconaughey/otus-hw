@@ -44,7 +44,7 @@ yum install -y nginx
 getenforce
 ```
 
-![alt text](images/images/images/image-1.png)
+![alt text](images/image-1.png)
 
 ### Способ 1. Переключатели setsebool
 
@@ -68,7 +68,7 @@ systemctl status nginx.service
 vi /etc/nginx/nginx.conf
 ```
 
-![alt text](images/images/image-10.png)
+![alt text](images/image-10.png)
 
 Проверим файл настроек и перезапустим nginx
 

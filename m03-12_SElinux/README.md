@@ -2,7 +2,7 @@
 
 ## Задание 1. Запустить nginx на нестандартном порту 3-мя разными способами
 
-Для выполнения задания будем использовать almalinux/9 версии 9.4.20240805
+Для выполнения задания будем использовать almalinux/9 версии 9.4.20240805 (Vagrentfile в папке task_1)
 
 ```bash
 vagrant init almalinux/9 --box-version 9.4.20240805
@@ -234,7 +234,7 @@ cd otus-linux-adm/selinux_dns_problems/
 ansible.compatibility_mode = "2.0"
 ````
 
-Запустим стенд
+Vagrantfile и provisioning в папке task_2. Запустим стенд
 
 ```
 vagrant up

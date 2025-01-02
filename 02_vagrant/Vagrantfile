@@ -1,0 +1,28 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  # Указываем используемый провайдер
+  config.vm.provider "vagrant-vmware-desktop" do |vmware|
+    vmware.vmx["numvcpus"] = "4" # Указываем 4 процессора
+    vmware.vmx["memsize"] = "4096" # Указываем 4 ГБ оперативной памяти
+    vmware.vmx["disk.size"] = "55000" # Указываем диск на 55 ГБ
+  end
+
+  # Указываем базовый образ
+  config.vm.box = "bento/ubuntu-20.04" # Используйте подходящий образ
+
+  # Настраиваем имя машины
+  config.vm.hostname = "vm-kern-upd"
+
+  # Настройки сети (опционально)
+  # config.vm.network "private_network", type: "dhcp"
+  
+  config.vm.provision "shell", inline: <<-SHELL
+  apt-get update # Обновим список пакетов
+  apt-get install -y fakeroot build-essential ncurses-dev xz-utils libssl-dev bc flex libelf-dev bison # Установим необходимые пакеты
+  #sudo lvextend -l +100%FREE /dev/ubuntu-vg/ubuntu-lv # Увеличим размер диска на 100%
+  #sudo resize2fs /dev/ubuntu-vg/ubuntu-lv # Ресайзим файловую систему
+  SHELL
+
+end

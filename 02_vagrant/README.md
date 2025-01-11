@@ -66,6 +66,7 @@ vagrant up
 Подключимся
 ```
 vagrant ssh
+vagrant ssh
 ```
 Проверим версию ядра
 ```

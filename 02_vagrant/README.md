@@ -77,7 +77,6 @@ uname -r
 ```
 wget https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-5.10.232.tar.xz
 ```
-
 Распаковываем и проходим в дирректорию
 ```
 tar xvf linux-5.10.232.tar.xz && cd linux-5.10.232

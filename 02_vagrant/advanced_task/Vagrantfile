@@ -10,6 +10,7 @@ Vagrant.configure("2") do |config|
     vmware.vmx["numvcpus"] = "8" # Указываем 4 процессора
     vmware.vmx["memsize"] = "4096" # Указываем 4 ГБ оперативной памяти
     vmware.vmx["disk.size"] = "55000" # Указываем диск на 55 ГБ
+    vmware.gui = true
   end
 
 
@@ -25,6 +26,16 @@ Vagrant.configure("2") do |config|
   apt-get install -y fakeroot build-essential ncurses-dev xz-utils libssl-dev bc flex libelf-dev bison # Установим необходимые пакеты
   sudo lvextend -l +100%FREE /dev/ubuntu-vg/ubuntu-lv # Увеличим размер диска на 100%
   sudo resize2fs /dev/ubuntu-vg/ubuntu-lv # Ресайзим файловую систему
+  # Скачиваем и разархивируем ядро
+  cd /home/vagrant/
+  wget https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-5.10.10.tar.xz
+  tar -xf linux-5.10.10.tar.xz
+  cd linux-5.10.10
+  # Копируем файл настроек и донастраиваем
+  cp /boot/config-5.4.0-176-generic .config
+  scripts/config --disable SYSTEM_TRUSTED_KEYS
+  scripts/config --disable SYSTEM_REVOCATION_KEYS
+  scripts/config --disable CONFIG_DEBUG_INFO_BTF
   SHELL
 
 end

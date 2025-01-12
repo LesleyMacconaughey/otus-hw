@@ -1,0 +1,21 @@
+Vagrant.configure("2") do |config|
+    # Указываем базовый образ и его версию
+    config.vm.box = "bento/almalinux-9.3"
+    config.vm.box_version = "202404.23.0"
+    config.vm.hostname = "vm-rpm" # Настраиваем имя машины
+    # Выполняем provision с помощью shell скрипта
+    #config.vm.provision "shell", inline: <<-SHELL
+    #yum install -y wget rpmdevtools rpm-build createrepo yum-utils cmake gcc git nano # Устанавливаем необходимые пакеты
+    #mkdir rpm && cd rpm # Создаем каталог и переходим в него
+    #yumdownloader --source nginx # Скачиваем исходники пакета nginx
+    #rpm -Uvh nginx*.src.rpm # Устанавливаем пакет
+    #yum-builddep nginx -y # Устанавливаем зависимости
+    #cd /root 
+    #git clone --recurse-submodules -j8 https://github.com/google/ngx_brotli # Клонируем репозиторий ngx_brotli
+    #cd ngx_brotli/deps/brotli # Переходим в каталог brotli
+    #mkdir out && cd out # Создаем каталог и переходим в него
+    #cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -DCMAKE_C_FLAGS="-Ofast -m64 -march=native -mtune=native -flto -funroll-loops -ffunction-sections -fdata-sections -Wl,--gc-sections" -DCMAKE_CXX_FLAGS="-Ofast -m64 -march=native -mtune=native -flto -funroll-loops -ffunction-sections -fdata-sections -Wl,--gc-sections" -DCMAKE_INSTALL_PREFIX=./installed .. # Конфигурируем сборку
+    #cmake --build . --config Release -j 2 --target brotlienc # Собираем brotlienc
+    #cd ../../../.. # Переходим в корневой каталог
+    #SHELL
+  end

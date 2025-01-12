@@ -1,0 +1,30 @@
+---
+- name: nginx | Установка и настройка nginx
+  hosts: vm-rpm
+  become: yes
+  vars:
+     nginx_listen_port: 8080
+
+  tasks: 
+    - name: install packages
+      ansible.builtin.yum:
+        name:
+          - wget
+          - rpmdevtools
+          - rpm-build
+          - createrepo
+          - yum-utils
+          - cmake
+          - gcc
+          - git
+          - nano
+        state: present
+        update_cache: yes
+      tags:
+        - install packages
+    - name: Download nginx source RPM
+      command: yumdownloader --source nginx
+      args:
+        chdir: rpm
+
+

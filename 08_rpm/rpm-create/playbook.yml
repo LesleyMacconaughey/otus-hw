@@ -25,6 +25,6 @@
     - name: Download nginx source RPM
       command: yumdownloader --source nginx
       args:
-        chdir: rpm
+        chdir: /rpm
 
 

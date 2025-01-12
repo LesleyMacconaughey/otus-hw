@@ -23,8 +23,10 @@
       tags:
         - install packages
     - name: Download nginx source RPM
-      ansible.builtin.command: yumdownloader --source nginx
+      ansible.builtin.command:
+        cmd: yumdownloader --source nginx
+        chdir: rpm
       args:
-        chdir: /rpm
+        warn: false
 
 

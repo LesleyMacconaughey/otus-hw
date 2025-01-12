@@ -1,0 +1,61 @@
+---
+- name: packages install for spawn-fcgi
+  hosts: centos8-hw09
+  become: true
+  tasks:
+
+#    - name: installing epel
+#      yum:
+#        name: epel-release
+#        state: present
+
+    - name: installing packages
+      yum:
+        name:
+          - httpd
+        state: present
+    
+    - name: copy files with options
+      copy:
+        src: files/httpd-first
+        dest: /etc/sysconfig/
+        owner: root
+        group: root
+        mode: '0644'
+    
+    - name: copy files with options
+      copy:
+        src: files/httpd-second
+        dest: /etc/sysconfig/
+        owner: root
+        group: root
+        mode: '0644'
+    
+    - name: copy httpd congig files
+      copy:
+        src: files/first.conf
+        dest: /etc/httpd/conf/
+        owner: root
+        group: root
+        mode: '0644'
+    
+    - name: copy httpd congig files
+      copy:
+        src: files/second.conf
+        dest: /etc/httpd/conf/
+        owner: root
+        group: root
+        mode: '0644'
+    
+    - name: moving original conf file
+      raw: mv -f /etc/httpd/conf/httpd.conf /etc/httpd/conf/httpd.conf.BAK
+
+    - name: Reload systemd daemon
+      systemd_service:
+        daemon_reload: yes
+    
+#    - name: start spawn-fcgi unit
+#      systemd_service:
+#        name: spawn-fcgi.service
+#        state: started
+ 

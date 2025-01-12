@@ -1,0 +1,7 @@
+---
+- name: ping check
+  hosts: all
+  tasks:
+    - name: ping hw-09
+      ping:
+

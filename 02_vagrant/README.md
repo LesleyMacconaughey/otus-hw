@@ -156,3 +156,8 @@ reboot
 uname -r
 ```
 Ядро обновилось и стало версии 5.10.10
+
+## Полезные ссылки
+[elrepo.org](https://elrepo.org/wiki/doku.php?id=start)
+<br>
+[Репозиторий vagrant_kernel_update](https://github.com/Nickmob/vagrant_kernel_update)

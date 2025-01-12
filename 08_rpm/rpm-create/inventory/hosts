@@ -5,4 +5,4 @@ webservers:
       ansible_host: 127.0.0.1
       ansible_port: 2222
       ansible_user: vagrant
-      ansible_private_key_file: ../.vagrant/machines/default/vmware_desktop/private_key
+      ansible_private_key_file: ../.vagrant/machines/default/virtualbox/private_key

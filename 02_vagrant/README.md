@@ -42,6 +42,11 @@ yum --enablerepo elrepo-kernel install kernel-ml -y
 Installed:
   kernel-ml-6.12.9-1.el9.elrepo.aarch64                kernel-ml-core-6.12.9-1.el9.elrepo.aarch64                kernel-ml-modules-6.12.9-1.el9.elrepo.aarch64   
 ```
+Обновим параметры GRUB
+```
+grub2-mkconfig -o /boot/grub2/grub.cfg
+grub2-set-default 0
+```
 Перезагрузимся с новым ядром и проверим версию
 ```
 reboot

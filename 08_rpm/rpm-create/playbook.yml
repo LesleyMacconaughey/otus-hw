@@ -1,9 +1,9 @@
 ---
 - name: nginx | Установка и настройка nginx
-  hosts: vm-rpm
+  hosts: hw-rpm
   become: yes
-  vars:
-     nginx_listen_port: 8080
+#  vars:
+#     nginx_listen_port: 8080
 
   tasks: 
     - name: install packages
@@ -13,7 +13,7 @@
           - rpmdevtools
           - rpm-build
           - createrepo
-          - yum-utils
+          # - yum-utilswatsh 
           - cmake
           - gcc
           - git
@@ -22,11 +22,16 @@
         update_cache: yes
       tags:
         - install packages
+    - name: create directories
+      ansible.builtin.file:
+        path: rpm
+        state: directory
+      tags: 
+        - create directories
     - name: Download nginx source RPM
       ansible.builtin.command:
         cmd: yumdownloader --source nginx
         chdir: rpm
-      args:
-        warn: false
+...
 
 

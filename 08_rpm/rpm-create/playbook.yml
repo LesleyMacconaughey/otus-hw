@@ -1,19 +1,17 @@
 ---
 - name: nginx | Установка и настройка nginx
   hosts: hw-rpm
-  become: yes
-#  vars:
-#     nginx_listen_port: 8080
-
+  become: true
   tasks: 
+    # Установка необходимых пакетов
     - name: install packages
-      ansible.builtin.yum:
+      yum:
         name:
           - wget
           - rpmdevtools
           - rpm-build
           - createrepo
-          # - yum-utilswatsh 
+          - yum-utils 
           - cmake
           - gcc
           - git
@@ -21,17 +19,156 @@
         state: present
         update_cache: yes
       tags:
-        - install packages
-    - name: create directories
-      ansible.builtin.file:
-        path: rpm
+        - install_packages
+    
+    # Создание директории для загрузки SRPM пакета
+    - name: Create rpm directory
+      file:
+        path: /root/rpm
         state: directory
       tags: 
         - create directories
+    
+    # Загрузка SRPM пакета nginx
     - name: Download nginx source RPM
-      ansible.builtin.command:
-        cmd: yumdownloader --source nginx
-        chdir: rpm
-...
+      shell: |
+        yumdownloader --source nginx
+      args:
+        chdir: /root/rpm
+    # Установка SRPM пакета
+    - name: Install nginx source RPM
+      shell: |
+        rpm -Uvh nginx*.src.rpm
+      args:
+        chdir: /root/rpm
 
+    # Установка зависимостей для сборки nginx
+    - name: Install build dependencies for nginx
+      shell: |
+        yum-builddep -y nginx
 
+    # Клонирование репозитория ngx_brotli
+    - name: Clone ngx_brotli repository
+      git:
+        repo: https://github.com/google/ngx_brotli
+        dest: /root/ngx_brotli
+        version: HEAD
+        recursive: yes  # Для --recurse-submodules
+        force: yes  # Переклонировать, если каталог уже существует
+
+    # Создание директории out и сборка модуля ngx_brotli
+    - name: Build ngx_brotli module
+      shell: |
+        mkdir -p deps/brotli/out
+        cd deps/brotli/out
+        cmake -DCMAKE_BUILD_TYPE=Release \
+              -DBUILD_SHARED_LIBS=OFF \
+              -DCMAKE_C_FLAGS="-Ofast -m64 -march=native -mtune=native -flto -funroll-loops -ffunction-sections -fdata-sections -Wl,--gc-sections" \
+              -DCMAKE_CXX_FLAGS="-Ofast -m64 -march=native -mtune=native -flto -funroll-loops -ffunction-sections -fdata-sections -Wl,--gc-sections" \
+              -DCMAKE_INSTALL_PREFIX=./installed ..
+        cmake --build . --config Release -j 2 --target brotlienc
+      args:
+        chdir: /root/ngx_brotli
+
+    # Изменение spec файла
+    - name: Update nginx.spec to include ngx_brotli module
+      lineinfile:
+        path: /root/rpmbuild/SPECS/nginx.spec
+        regexp: '^(.*configure.*)$'
+        line: '\1 --add-module=/root/ngx_brotli \'
+
+    # Сборка RPM пакета
+    - name: Build RPM package
+      shell: |
+        rpmbuild -ba nginx.spec -D 'debug_package %{nil}'
+      args:
+        chdir: /root/rpmbuild/SPECS
+
+    # Копируем пакеты в общий каталог
+    - name: Copy packages to common directory
+      shell: |
+        cp /root/rpmbuild/RPMS/noarch/* /root/rpmbuild/RPMS/x86_64/
+
+    # Установим пакеты
+    - name: Install all RPM packages using yum localinstall
+      shell: |
+        yum localinstall -y /root/rpmbuild/RPMS/x86_64/*.rpm
+      tags:
+        - install_packages
+
+    # Запустим nginx
+    - name: Start nginx service
+      systemd:
+        name: nginx
+        state: started
+        enabled: true
+
+    # Убедимся, что nginx работает
+    - name: Check nginx service status
+      command: systemctl status nginx
+      register: nginx_status
+      ignore_errors: true
+    - name: Display nginx service status
+      debug:
+        var: nginx_status.stdout
+
+    # Создаем собственный репозиторий
+    # Копируем пакеты в репозиторий
+    - name: Copy RPM packages to repository directory
+      shell: |
+        mkdir -p /usr/share/nginx/html/repo
+        cp /root/rpmbuild/RPMS/x86_64/*.rpm /usr/share/nginx/html/repo/
+
+    # Инициализация репозитория
+    - name: Initialize repository
+      shell: |
+        createrepo /usr/share/nginx/html/repo/
+
+    # Настройка Nginx для репозитория
+    - name: Configure Nginx to serve repository
+      lineinfile:
+        path: /etc/nginx/nginx.conf
+        regexp: '^\s*index\s+.*;$'
+        line: 'index index.html index.htm;'
+        insertafter: '^http\s*{'
+      notify: reload nginx
+
+    - name: Enable autoindex in Nginx
+      lineinfile:
+        path: /etc/nginx/nginx.conf
+        regexp: '^\s*autoindex\s+.*;$'
+        line: 'autoindex on;'
+        insertafter: '^http\s*{'
+      notify: reload nginx
+
+    # Добавление репозитория otus
+    - name: Add custom repository
+      copy:
+        content: |
+          [otus]
+          name=otus-linux
+          baseurl=http://localhost/repo
+          gpgcheck=0
+          enabled=1
+        dest: /etc/yum.repos.d/otus.repo
+
+    # Добавим пакет в наш репозиторий. Обновим кэш
+    - name: Update yum cache and list repository
+      shell: |
+        cd /usr/share/nginx/html/repo/
+        wget https://repo.percona.com/yum/percona-release-latest.noarch.rpm
+        createrepo /usr/share/nginx/html/repo/
+        yum makecache
+
+    # Установим репозиторий percona-release
+    - name: Install percona-release
+      yum:
+        name:
+          - percona-release.noarch
+        state: present        
+
+  handlers:
+    - name: reload nginx
+      service:
+        name: nginx
+        state: reloaded

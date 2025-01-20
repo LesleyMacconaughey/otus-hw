@@ -2,7 +2,7 @@
 webservers:
   hosts:
     hw-rpm:
-      ansible_host: 89.169.161.223
+      ansible_host: 158.160.86.141
       ansible_port: 22
       ansible_user: yc-user
       ansible_private_key_file: ~/.ssh/id_rsa

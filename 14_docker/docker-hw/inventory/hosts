@@ -2,7 +2,7 @@
 webservers:
   hosts:
     docker-hw:
-      ansible_host: 84.252.139.135
+      ansible_host: 
       ansible_port: 22
       ansible_user: yc-user
       ansible_private_key_file: ~/.ssh/id_rsa

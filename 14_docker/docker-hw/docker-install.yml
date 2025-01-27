@@ -43,7 +43,7 @@
 
     - name: Добавляем пользователя yc-user в группу docker
       ansible.builtin.user:
-        name: yc-user
-        group: docker
+        name: "{{ ansible_user }}"
+        groups: docker
         append: yes
 ...

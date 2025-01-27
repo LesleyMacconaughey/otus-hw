@@ -1,0 +1,44 @@
+---
+- name: Create custom NGINX Docker image and run container
+  hosts: all
+  become: false # Выполнение от обычного пользователя
+  tasks:
+    - name: Создание директорий
+      file:
+        path: "{{ item }}"
+        state: directory
+      loop:
+        - /tmp/www
+
+    - name: Создание пользовательского index.html
+      ansible.builtin.copy:
+        dest: /tmp/www/index.html
+        content: |
+          <!DOCTYPE html>
+          <html lang="en">
+          <head>
+              <meta charset="UTF-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              <title>Custom NGINX</title>
+          </head>
+          <body>
+              <h1>Добро пожаловать на пользовательскую страницу!</h1>
+          </body>
+          </html>
+      
+    - name: Создание Dockerfile
+      ansible.builtin.copy:
+        dest: /tmp/www/Dockerfile
+        content: |
+          FROM nginx:alpine
+          COPY index.html /usr/share/nginx/html/index.html
+          EXPOSE 80
+          CMD ["nginx", "-g", "daemon off;"]
+
+
+    - name: Звпуск контейнера
+      ansible.builtin.shell: |
+        docker build -t nginx-custom .
+        docker run -d -p 80:80 --name nginx-container nginx-custom
+      args:
+        chdir: /tmp/www

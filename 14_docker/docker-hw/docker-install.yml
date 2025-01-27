@@ -1,5 +1,5 @@
 ---
-- name: Install Docker and Docker Compose on Debian 12
+- name: Установка Docker и Docker Compose на Debian 12
   hosts: all
   become: true  # Выполнение от имени root
   tasks:
@@ -25,7 +25,7 @@
             sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
           sudo apt-get update
 
-    - name: Install the Docker packages
+    - name: Установка Docker
       apt:
         name:
           - docker-ce
@@ -35,3 +35,15 @@
           - docker-compose-plugin
           - docker-compose
         state: present
+    
+    - name: Для запуска контейнеров от непривелигированного пользователя добавляем группу
+      ansible.builtin.group:
+        name: docker
+        state: present
+
+    - name: Добавляем пользователя yc-user в группу docker
+      ansible.builtin.user:
+        name: yc-user
+        group: docker
+        append: yes
+...

@@ -1,0 +1,33 @@
+---
+- name: Предоставление прав пользователю dev-docker для работы с Docker
+  hosts: all
+  become: yes  # Используем привилегии sudo
+  tasks:
+    - name: Убедимся, что Docker установлен
+      apt:
+        name: docker.io
+        state: present
+        update_cache: yes
+
+    - name: Создаём группу docker, если её нет
+      group:
+        name: docker
+        state: present
+
+    - name: Добавляем пользователя dev-docker в группу docker
+      user:
+        name: dev-docker
+        groups: docker
+        append: yes
+
+    - name: Настройка прав для управления Docker-сервисом
+      copy:
+        dest: /etc/sudoers.d/dev-docker-docker-service
+        content: |
+          dev-docker ALL=(ALL) NOPASSWD: /bin/systemctl restart docker
+        mode: '0440'  # Права только на чтение для владельца и группы
+
+    - name: Перезапуск Docker (чтобы изменения вступили в силу)
+      service:
+        name: docker
+        state: restarted

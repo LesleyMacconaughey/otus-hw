@@ -1,0 +1,1 @@
+yc compute instance delete vm-test

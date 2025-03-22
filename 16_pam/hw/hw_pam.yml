@@ -1,0 +1,106 @@
+---
+- name: Домашнее задание PAM
+  hosts: all
+  become: yes  # Используем привилегии sudo
+  tasks:
+    - name: Разрешение PasswordAuthentication в sshd_config
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^PasswordAuthentication'
+        line: 'PasswordAuthentication yes'
+        state: present
+      notify: Restart SSHD
+
+    - name: Проверка изменений в sshd_config
+      command: grep PasswordAuthentication /etc/ssh/sshd_config
+      register: sshd_config_check
+
+    - name: Вывод результата проверки
+      debug:
+        var: sshd_config_check.stdout
+
+    - name: Удаление /etc/ssh/sshd_config.d/50-cloud-init.conf
+      file:
+        path: /etc/ssh/sshd_config.d/50-cloud-init.conf
+        state: absent
+      notify: Restart SSHD
+
+    - name: Убедимся, что UsePAM включен
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^#?UsePAM'
+        line: 'UsePAM yes'
+        state: present
+      notify: Restart SSHD
+
+    - name: Создание пользователей otusadm и otus
+      user:
+        name: "{{ item }}"
+        state: present
+        create_home: yes
+      loop:
+        - otusadm
+        - otus
+
+    - name: Установка паролей для пользователей otusadm и otus
+      user:
+        name: "{{ item.name }}"
+        password: "{{ item.password | password_hash('sha512') }}"
+      loop:
+        - { name: 'otusadm', password: 'Otus2022!' }
+        - { name: 'otus', password: 'Otus2022!' }
+
+    - name: Создание группы admin, если она не существует
+      group:
+        name: admin
+        state: present
+
+    - name: Добавление пользователей в группу admin
+      user:
+        name: "{{ item }}"
+        groups: admin
+        append: yes
+      loop:
+        - otusadm
+        - root
+
+    - name: Создание директории /usr/local/bin, если её нет
+      file:
+        path: /usr/local/bin
+        state: directory
+        mode: '0755'
+
+    - name: Создание файла /usr/local/bin/login.sh
+      copy:
+        dest: /usr/local/bin/login.sh
+        content: |
+          #!/bin/bash
+          #Первое условие: если день недели суббота или воскресенье
+          if [ $(date +%a) = "Sat" ] || [ $(date +%a) = "Sun" ]; then
+           #Второе условие: входит ли пользователь в группу admin
+           if getent group admin | grep -qw "$PAM_USER"; then
+                  #Если пользователь входит в группу admin, то он может подключиться
+                  exit 0
+                else
+                  #Иначе ошибка (не сможет подключиться)
+                  exit 1
+              fi
+            #Если день не выходной, то подключиться может любой пользователь
+            else
+              exit 0
+          fi
+        mode: '0755'  # Устанавливаем права на выполнение
+
+    - name: Добавление модуля pam_exec в /etc/pam.d/sshd
+      lineinfile:
+        path: /etc/pam.d/sshd
+        line: 'auth required pam_exec.so /usr/local/bin/login.sh'
+        insertafter: '^#@include common-auth'  # Вставляем после строки с @include common-auth
+        create: yes  # Создаём файл, если он не существует
+      notify: Restart SSHD
+
+  handlers:
+    - name: Restart SSHD
+      service:
+        name: sshd
+        state: restarted

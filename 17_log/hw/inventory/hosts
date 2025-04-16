@@ -1,0 +1,21 @@
+---
+all:
+  hosts:
+    webserver:
+      ansible_host: 84.252.143.68
+      ansible_port: 22
+      ansible_user: yc-user
+      ansible_private_key_file: ~/.ssh/id_rsa
+    logserver:
+      ansible_host: log
+      ansible_port: 22
+      ansible_user: yc-user
+      ansible_private_key_file: ~/.ssh/id_rsa
+      ansible_ssh_common_args: '-o ProxyJump=yc-user@84.252.143.68'
+  children:
+    web:
+      hosts:
+        webserver:
+    log:
+      hosts:
+        logserver:

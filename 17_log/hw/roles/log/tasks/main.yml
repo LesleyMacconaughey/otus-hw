@@ -1,0 +1,31 @@
+---
+- name: Устанавливаем пакеты
+  apt:
+    name:
+      - rsyslog
+      - chrony
+    state: present
+    update_cache: yes
+
+- name: Запускаем и добавляем в автозагрузку
+  service:
+    name: "{{ item }}"
+    state: started
+    enabled: yes
+  loop:
+      - chrony
+      - rsyslog
+
+- name: Настраиваем rsyslog для приема логов от web сервера
+  copy:
+    dest: /etc/rsyslog.d/10-web.conf
+    content: |
+      module(load="imudp")
+      input(type="imudp" port="514")
+      module(load="imtcp")
+      input(type="imtcp" port="514")
+      $template RemoteLogs, "/var/log/remote/%HOSTNAME%/%PROGRAMNAME%.log"
+      *.* ?RemoteLogs
+      & ~
+    mode: '0644'
+  notify: Restart rsyslog

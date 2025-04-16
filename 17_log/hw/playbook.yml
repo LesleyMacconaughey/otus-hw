@@ -1,0 +1,22 @@
+---
+
+- name: Настраиваем веб сервер
+  hosts: web
+  become: yes  # Используем привилегии sudo
+  vars:
+    ansible_python_interpreter: /usr/bin/python3.10
+  roles:
+    - role: web
+      vars:
+        log_server: "log.ru-central1.internal"
+        remote_syslog_port: 514
+      tags: webserver
+
+- name: Настраиваем сервер для сбора логов
+  hosts: log
+  become: yes  # Используем привилегии sudo
+  vars:
+    ansible_python_interpreter: /usr/bin/python3.10
+  roles:
+    - role: log
+      tags: logserver

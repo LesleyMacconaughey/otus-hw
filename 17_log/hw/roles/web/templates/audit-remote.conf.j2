@@ -1,0 +1,14 @@
+# Конфигурация для аудит-логов
+
+module(load="imfile" PollingInterval="10")
+
+# Правило для audit.log
+input(type="imfile"
+      File="/var/log/audit/audit.log"
+      Tag="audit"
+      Severity="info"
+      Facility="local6")
+
+# Отправка аудит логов на удаленный сервер
+local6.* @{{ log_server }}:{{ remote_syslog_port }}
+& stop

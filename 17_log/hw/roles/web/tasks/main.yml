@@ -1,0 +1,57 @@
+---
+- name: Устанавливаем пакеты
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+  loop:
+    - nginx
+    - chrony
+    - rsyslog
+    - auditd
+    - audispd-plugins
+
+- name: Запускаем и добавляем в автозагрузку
+  service:
+    name: "{{ item }}"
+    state: started
+    enabled: yes
+  loop:
+    - nginx
+    - chrony
+    - rsyslog
+    - auditd
+
+- name: Заменяем настройки nginx и перезагружаем
+  template:
+    src: templates/nginx.conf.j2
+    dest: /etc/nginx/nginx.conf
+    backup: yes
+    validate: 'nginx -t -c %s'
+  notify: Restart Nginx
+
+- name: Создание постоянных правил auditd
+  copy:
+    dest: /etc/audit/rules.d/nginx.rules
+    content: |
+      # Nginx audit rules
+      -w /etc/nginx/ -p wa -k nginx_config
+      -w /etc/nginx/nginx.conf -p wa -k nginx_config
+      -w /etc/nginx/conf.d/ -p wa -k nginx_config
+      -w /etc/nginx/sites-available/ -p wa -k nginx_config
+      -w /etc/nginx/sites-enabled/ -p wa -k nginx_config
+      -w /usr/sbin/nginx -p x -k nginx_exec
+    owner: root
+    group: root
+    mode: '0640'
+  notify: Restart auditd
+
+- name: Настройка удаленного логирования auditd
+  template:
+    src: templates/audit-remote.conf.j2
+    dest: /etc/rsyslog.d/audit-remote.conf
+    owner: root
+    group: root
+    mode: '0640'
+  notify: Restart rsyslog
+

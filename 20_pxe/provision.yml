@@ -13,8 +13,6 @@
     netboot_url: "https://releases.ubuntu.com/noble/ubuntu-24.04.2-netboot-amd64.tar.gz"
     iso_url: "https://releases.ubuntu.com/noble/ubuntu-24.04.2-live-server-amd64.iso"
 
-
-
   tasks:
     # Обновление пакетов
     - name: Update apt cache
@@ -27,47 +25,6 @@
         name: bash-completion
         state: present
 
-    # # Установка и настройка DHCP сервера
-    # - name: Install DHCP server
-    #   apt:
-    #     name: isc-dhcp-server
-    #     state: present
-
-    # - name: Configure DHCP server
-    #   copy:
-    #     dest: /etc/dhcp/dhcpd.conf
-    #     content: |
-    #       # DHCP Configuration for PXE
-    #       authoritative;
-    #       subnet {{ dhcp_subnet }} netmask {{ dhcp_netmask }} {
-    #         range {{ dhcp_range }};
-    #         option domain-name-servers {{ dhcp_dns }};
-    #         option routers {{ dhcp_gateway }};
-    #         option broadcast-address {{ dhcp_broadcast }};
-    #         default-lease-time 600;
-    #         max-lease-time 7200;
-    #       }
-
-    # - name: Restart DHCP service
-    #   service:
-    #     name: isc-dhcp-server
-    #     state: restarted
-
-    # # Установка и настройка TFTP сервера
-    # - name: Install TFTP server
-    #   apt:
-    #     name: tftpd-hpa
-    #     state: present
-
-    # - name: Configure TFTP server
-    #   copy:
-    #     dest: /etc/default/tftpd-hpa
-    #     content: |
-    #       TFTP_USERNAME="tftp"
-    #       TFTP_DIRECTORY="{{ tftp_directory }}"
-    #       TFTP_ADDRESS=":69"
-    #       TFTP_OPTIONS="--secure"
-
     - name: Create TFTP base directory
       file:
         path: "{{ tftp_directory }}"
@@ -76,21 +33,6 @@
         group: root
         mode: 0755
 
-    # # Создаем целевую директорию для распаковки
-    # - name: Create netboot target directory
-    #   file:
-    #     path: "{{ tftp_directory }}/amd64"
-    #     state: directory
-    #     owner: tftp
-    #     group: tftp
-    #     mode: 0755
-
-    # - name: Restart TFTP service
-    #   service:
-    #     name: tftpd-hpa
-    #     state: restarted
-
-    # Отключение фаервола
     - name: Disable UFW firewall
       service:
         name: ufw
@@ -129,15 +71,15 @@
         remote_src: yes
         extra_opts: "--strip-components=1"
 
-    - name: Create directory for kickstart files
-      ansible.builtin.file:
-        path: /srv/images/ks
-        state: directory
-        mode: '0755'
+    # - name: Create directory for kickstart files
+    #   ansible.builtin.file:
+    #     path: /srv/images/ks
+    #     state: directory
+    #     mode: '0755'
 
     - name: Create user-data file for cloud-init
       ansible.builtin.copy:
-        dest: /srv/images/ks/user-data
+        dest: /srv/images/user-data
         content: |
           #cloud-config
           autoinstall:
@@ -190,7 +132,7 @@
           LABEL install
           KERNEL linux
           INITRD initrd
-          APPEND root=/dev/ram0 ramdisk_size=3000000 ip=dhcp iso-url=http://10.0.0.20/ubuntu-24.04.2-live-server-amd64.iso autoinstall ds=nocloud-net;s=http://10.0.0.20/ks/
+          APPEND root=/dev/ram0 ramdisk_size=3000000 ip=dhcp iso-url=http://10.0.0.20/ubuntu-24.04.2-live-server-amd64.iso autoinstall ds=nocloud-net;s=http://10.0.0.20/
         owner: root
         group: root
         mode: '0644'

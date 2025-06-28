@@ -1,0 +1,256 @@
+---
+- name: Configure PXE Server
+  hosts: pxeserver
+  become: true
+  vars:
+    dhcp_subnet: "10.0.0.0"
+    dhcp_netmask: "255.255.255.0"
+    dhcp_range: "10.0.0.100 10.0.0.200"
+    dhcp_dns: "10.0.0.20"
+    dhcp_gateway: "10.0.0.20"
+    dhcp_broadcast: "10.0.0.255"
+    tftp_directory: "/srv/tftp"
+    netboot_url: "https://releases.ubuntu.com/noble/ubuntu-24.04.2-netboot-amd64.tar.gz"
+    iso_url: "https://releases.ubuntu.com/noble/ubuntu-24.04.2-live-server-amd64.iso"
+
+
+
+  tasks:
+    # Обновление пакетов
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+
+    # Установка bash-completion
+    - name: Install bash-completion
+      apt:
+        name: bash-completion
+        state: present
+
+    # # Установка и настройка DHCP сервера
+    # - name: Install DHCP server
+    #   apt:
+    #     name: isc-dhcp-server
+    #     state: present
+
+    # - name: Configure DHCP server
+    #   copy:
+    #     dest: /etc/dhcp/dhcpd.conf
+    #     content: |
+    #       # DHCP Configuration for PXE
+    #       authoritative;
+    #       subnet {{ dhcp_subnet }} netmask {{ dhcp_netmask }} {
+    #         range {{ dhcp_range }};
+    #         option domain-name-servers {{ dhcp_dns }};
+    #         option routers {{ dhcp_gateway }};
+    #         option broadcast-address {{ dhcp_broadcast }};
+    #         default-lease-time 600;
+    #         max-lease-time 7200;
+    #       }
+
+    # - name: Restart DHCP service
+    #   service:
+    #     name: isc-dhcp-server
+    #     state: restarted
+
+    # # Установка и настройка TFTP сервера
+    # - name: Install TFTP server
+    #   apt:
+    #     name: tftpd-hpa
+    #     state: present
+
+    # - name: Configure TFTP server
+    #   copy:
+    #     dest: /etc/default/tftpd-hpa
+    #     content: |
+    #       TFTP_USERNAME="tftp"
+    #       TFTP_DIRECTORY="{{ tftp_directory }}"
+    #       TFTP_ADDRESS=":69"
+    #       TFTP_OPTIONS="--secure"
+
+    - name: Create TFTP base directory
+      file:
+        path: "{{ tftp_directory }}"
+        state: directory
+        owner: root
+        group: root
+        mode: 0755
+
+    # # Создаем целевую директорию для распаковки
+    # - name: Create netboot target directory
+    #   file:
+    #     path: "{{ tftp_directory }}/amd64"
+    #     state: directory
+    #     owner: tftp
+    #     group: tftp
+    #     mode: 0755
+
+    # - name: Restart TFTP service
+    #   service:
+    #     name: tftpd-hpa
+    #     state: restarted
+
+    # Отключение фаервола
+    - name: Disable UFW firewall
+      service:
+        name: ufw
+        state: stopped
+        enabled: no
+
+    # Установка и настройка DNSMasq
+    - name: Install DNSMasq
+      apt:
+        name: dnsmasq
+        state: present
+
+    - name: Configure DNSMasq
+      copy:
+        dest: /etc/dnsmasq.d/pxe.conf
+        content: |
+          interface=eth1
+          bind-interfaces
+          dhcp-range=eth1,{{ dhcp_range.split(' ')[0] }},{{ dhcp_range.split(' ')[1] }}
+          dhcp-boot=pxelinux.0
+          dhcp-match=set:efi-x86_64,option:client-arch,7
+          dhcp-boot=tag:efi-x86_64,bootx64.efi
+          enable-tftp
+          tftp-root={{ tftp_directory }}/amd64
+
+    # Загрузка и распаковка netboot образа
+    - name: Download netboot image
+      get_url:
+        url: "{{ netboot_url }}"
+        dest: /tmp/netboot.tar.gz
+
+    - name: Extract netboot image
+      unarchive:
+        src: /tmp/netboot.tar.gz
+        dest: "{{ tftp_directory }}"
+        remote_src: yes
+        extra_opts: "--strip-components=1"
+
+    - name: Create directory for kickstart files
+      ansible.builtin.file:
+        path: /srv/images/ks
+        state: directory
+        mode: '0755'
+
+    - name: Create user-data file for cloud-init
+      ansible.builtin.copy:
+        dest: /srv/images/ks/user-data
+        content: |
+          #cloud-config
+          autoinstall:
+            apt:
+              disable_components: []
+              geoip: true
+              preserve_sources_list: false
+              primary:
+                - arches:
+                    - amd64
+                    - i386
+                  uri: http://us.archive.ubuntu.com/ubuntu
+                - arches:
+                    - default
+                  uri: http://ports.ubuntu.com/ubuntu-ports
+            drivers:
+              install: false
+            identity:
+              hostname: linux
+              password: $6$sJgo6Hg5zXBwkkI8$btrEoWAb5FxKhajagWR49XM4EAOfO/Dr5bMrLOkGe3KkMYdsh7T3MU5mYwY2TIMJpVKckAwnZFs2ltUJ1abOZ.
+              realname: otus
+              username: otus
+            kernel:
+              package: linux-generic
+            keyboard:
+              layout: us
+              toggle: null
+              variant: ''
+            locale: en_US.UTF-8
+            network:
+              ethernets:
+                enp0s3:
+                  dhcp4: true
+                enp0s8:
+                  dhcp4: true
+              version: 2
+            ssh:
+              allow-pw: true
+              authorized-keys: []
+              install-server: true
+            updates: security
+            version: 1
+        mode: '0644'
+
+    - name: Replace PXE boot menu configuration
+      ansible.builtin.copy:
+        dest: /srv/tftp/amd64/pxelinux.cfg/default
+        content: |
+          DEFAULT install
+          LABEL install
+          KERNEL linux
+          INITRD initrd
+          APPEND root=/dev/ram0 ramdisk_size=3000000 ip=dhcp iso-url=http://10.0.0.20/ubuntu-24.04.2-live-server-amd64.iso autoinstall ds=nocloud-net;s=http://10.0.0.20/ks/
+        owner: root
+        group: root
+        mode: '0644'
+
+    # Установка и настройка Apache
+    - name: Install Apache
+      apt:
+        name: apache2
+        state: present
+
+    - name: Create images directory
+      file:
+        path: /srv/images
+        state: directory
+        mode: 0755
+
+    - name: Download Ubuntu ISO
+      get_url:
+        url: "{{ iso_url }}"
+        dest: /srv/images/ubuntu-24.04.2-live-server-amd64.iso
+
+    - name: Поиск и удаление всех файлов в /etc/apache2/sites-enabled
+      ansible.builtin.find:
+        paths: /etc/apache2/sites-enabled
+        recurse: no               # Без рекурсии (только первый уровень)
+        hidden: yes                # Включая скрытые файлы
+        file_type: any             # Любые типы: файлы, папки, симлинки
+      register: dir_content
+
+    - name: Удаляем все файлы в /etc/apache2/sites-enabled
+      ansible.builtin.file:
+        path: "{{ item.path }}"
+        state: absent
+      loop: "{{ dir_content.files }}"
+      loop_control:
+        label: "{{ item.path | basename }}"  # Упрощенный вывод в логах
+
+    - name: Configure Apache virtual host
+      copy:
+        dest: /etc/apache2/sites-available/ks-server.conf
+        content: |
+          <VirtualHost *:80>
+            DocumentRoot /srv/images
+            <Directory /srv/images>
+              Options Indexes MultiViews
+              AllowOverride All
+              Require all granted
+            </Directory>
+          </VirtualHost>
+
+    - name: Enable Apache site
+      file:
+        src: /etc/apache2/sites-available/ks-server.conf
+        dest: /etc/apache2/sites-enabled/ks-server.conf
+        state: link
+
+    - name: Restart services
+      service:
+        name: "{{ item }}"
+        state: restarted
+      loop:
+        - dnsmasq
+        - apache2

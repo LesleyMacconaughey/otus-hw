@@ -1,0 +1,15 @@
+[options]
+LogFile = {{ log_file }}
+PCAPDevice = eth1
+
+[openSSH]
+    sequence    = {{ knock_sequence }}
+    seq_timeout = {{ timeout }}
+    tcpflags    = syn
+    command     = /sbin/iptables -A INPUT -s %IP% -p tcp --dport {{ target_port }} -j ACCEPT
+
+[closeSSH]
+    sequence    = {{ knock_sequence }}
+    seq_timeout = {{ timeout }}
+    tcpflags    = syn
+    command     = /sbin/iptables -D INPUT -s %IP% -p tcp --dport {{ target_port }} -j ACCEPT

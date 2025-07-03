@@ -1,0 +1,18 @@
+- name: cleanup iptables rules (all hosts)
+  hosts: all
+  become: true
+  tasks:
+    - name: Set default policies to ACCEPT
+      ansible.builtin.iptables:
+        chain: INPUT
+        policy: ACCEPT
+    - name: Flush all iptables rules
+      ansible.builtin.iptables:
+        flush: true
+    - name: Set default policies to ACCEPT for FORWARD and OUTPUT chains
+      ansible.builtin.iptables:
+        chain: "{{ item }}"
+        policy: ACCEPT
+      loop:
+        - FORWARD
+        - OUTPUT

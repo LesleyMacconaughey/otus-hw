@@ -1,0 +1,204 @@
+---
+# Очистка всех правил iptables
+# Этот плейбук удаляет все правила iptables на всех хостах, чтобы начать с чистого листа.
+# Он должен быть выполнен перед применением новых правил.
+- name: cleanup iptables rules (all hosts)
+  import_playbook: cleanup_iptables_rules.yaml
+
+
+# Установка стандартных правил iptables
+# Этот плейбук устанавливает базовые правила iptables на всех хостах, чтобы обеспечить базовую безопасность и доступность SSH.
+# Он должен быть выполнен после очистки правил iptables.
+- name: Setup standart rules for iptables
+  hosts: all
+  become: true
+  tasks:
+    - name: Ensure iptables is installed
+      ansible.builtin.package:
+        name: iptables
+        state: present
+
+    - name: Allow related and established connections
+      ansible.builtin.iptables:
+        chain: INPUT
+        ctstate: ESTABLISHED,RELATED
+        action: insert
+        jump: ACCEPT
+
+    - name: Allow new incoming SYN packets on TCP port 22 (SSH)
+      ansible.builtin.iptables:
+        chain: INPUT
+        protocol: tcp
+        destination_port: '22'
+        ctstate: NEW
+        syn: match
+        jump: ACCEPT
+        comment: Accept new SSH connections.
+
+    - name: Allow ICMP echo requests (ping)
+      ansible.builtin.iptables:
+        chain: INPUT
+        protocol: icmp
+        icmp_type: echo-request
+        jump: ACCEPT
+
+    - name: Allow loopback interface traffic
+      ansible.builtin.iptables:
+        chain: INPUT
+        in_interface: lo
+        jump: ACCEPT 
+
+    - name: Drop all other incoming traffic
+      ansible.builtin.iptables:
+        chain: INPUT
+        policy: DROP
+
+# Настройка разрашения проброса трафика
+# Этот плейбук включает проброс трафика на всех маршрутизаторах, чтобы обеспечить маршрутизацию между сетями.
+# Он должен быть выполнен на всех маршрутизатора
+- name: Setup traffic forwarding
+  hosts: routers
+  become: true
+  tasks:
+    - name: Enable IP forwarding
+      ansible.builtin.sysctl:
+        name: net.ipv4.ip_forward
+        value: '1'
+        state: present
+        reload: yes
+
+# Настройка inetRouter
+- name: Configure inetRouter
+  hosts: inetRouter
+  become: true
+  tasks:
+    # Настраиваем маскарадинг для eth0
+    - name: Setup NAT masquerading for eth0
+      ansible.builtin.iptables:
+        table: nat
+        chain: POSTROUTING
+        jump: MASQUERADE
+        out_interface: eth0
+        comment: "NAT masquerade for eth0"
+    
+    # Настраиваем маршшрут в подсеть dir-net
+    - name: Add route to dir-net via centralRouter
+      ansible.builtin.command:
+        cmd: ip route add 192.168.0.0/28 via 192.168.255.2
+      ignore_errors: true
+
+
+# Настройка inetRouter2
+- name: Configure inetRouter2
+  hosts: inetRouter2
+  become: true
+  tasks:
+    # Настраиваем маскарадинг для eth0
+    - name: Setup NAT masquerading for eth0
+      ansible.builtin.iptables:
+        table: nat
+        chain: POSTROUTING
+        jump: MASQUERADE
+        out_interface: eth0
+        comment: "NAT masquerade for eth0"
+    # Настраиваем маршшрут в подсеть dir-net
+    - name: Add route to dir-net via centralRouter
+      ansible.builtin.command:
+        cmd: ip route add 192.168.0.0/28 via 192.168.255.14 dev eth1
+      ignore_errors: true
+    # Настраиваем проброс порта для доступа к centralServer
+    - name: Setup port forwarding for centralServer
+      ansible.builtin.iptables:
+        table: nat
+        chain: PREROUTING
+        protocol: tcp
+        destination_port: '80'
+        jump: DNAT
+        to_destination: 192.168.0.2:80
+    # Настраиваем маскарадинг http-трафика до centralServer
+    - name: Setup NAT masquerading for centralServer
+      ansible.builtin.iptables:
+        table: nat
+        chain: POSTROUTING
+        protocol: tcp
+        destination: '192.168.0.2'
+        destination_port: '80'
+        jump: MASQUERADE
+        out_interface: eth1
+
+# Настройка centralRouter
+- name: Configure centralRouter
+  hosts: centralRouter
+  become: true
+  tasks:
+    - name: Remove default route via eth0
+      command: ip route del default via 10.0.2.2 dev eth0
+      ignore_errors: true
+    # Добавляем новый маршрут по умолчанию через eth1
+    - name: Add default route via eth1 gateway
+      ansible.builtin.command: ip route add default via 192.168.255.1 dev eth1
+      ignore_errors: true
+
+    # Настраиваем маскарадинг для eth1
+    - name: Setup NAT masquerading for eth1
+      ansible.builtin.iptables:
+        table: nat
+        chain: POSTROUTING
+        jump: MASQUERADE
+        out_interface: eth1
+        comment: "NAT masquerade for eth1"
+
+
+# Настройка centralServer
+- name: Configure centralServer
+  hosts: centralServer
+  become: true
+  vars:
+    new_gateway: 192.168.0.1
+    new_interface: eth1
+  tags:
+    - centralServer
+  tasks:
+    - name: Remove default route via eth0
+      command: ip route del default via 10.0.2.2 dev eth0
+      ignore_errors: true
+
+    # Добавляем новый маршрут по умолчанию через eth1
+    - name: Add default route via eth1 gateway
+      ansible.builtin.command: ip route add default via 192.168.0.1 dev eth1
+      ignore_errors: true
+
+    # Удаляем все маршруты, связанные с eth0 (кроме локальной сети)
+    - name: Remove all routes for eth0
+      ansible.builtin.command: ip route del 10.0.2.0/24 dev eth0
+      ignore_errors: yes
+
+    # Добавляем маршрут до inetRouter2 через eth1
+    - name: Add route to inetRouter2 via eth1
+      ansible.builtin.command: ip route add 192.168.255.13 via 192.168.0.1 dev eth1
+      ignore_errors: yes
+
+    - name: "Wait for 5 seconds"
+      ansible.builtin.pause:
+        seconds: 5
+    
+    # Устанавливаем nginx
+    - name: Install nginx
+      ansible.builtin.package:
+        name: nginx
+        state: present
+        update_cache: yes
+    - name: Ensure nginx is running
+      ansible.builtin.service:
+        name: nginx
+        state: started
+
+    - name: Allow new incoming SYN packets on TCP port 80 (HTTP)
+      ansible.builtin.iptables:
+        chain: INPUT
+        protocol: tcp
+        destination_port: '80'
+        ctstate: NEW
+        syn: match
+        jump: ACCEPT
+        comment: Accept new HTTP connections.

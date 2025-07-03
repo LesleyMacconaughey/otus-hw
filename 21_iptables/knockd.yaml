@@ -1,0 +1,35 @@
+# Настройка knockd на inetRouter2
+- name: Configure knockd on inetRouter2
+  hosts: inetRouter2
+  become: true
+  vars:
+    # Параметры конфигурации knockd
+    knock_sequence: "tcp:7000,tcp:8000,tcp:9000"
+    target_port: 22
+    timeout: 30
+    log_file: /var/log/knockd.log
+  tasks:
+    # Установка пакета knockd
+    - name: Install knockd
+      ansible.builtin.apt:
+        name: knockd
+        state: present
+        update_cache: true
+
+    - name: Создание конфигурационного файла knockd
+      template:
+        src: knockd.conf.j2
+        dest: /etc/knockd.conf
+        owner: root
+        group: root
+        mode: '0644'
+
+    - name: Блокировка целевого порта через iptables
+      shell: |
+        iptables -A INPUT -p tcp --dport {{ target_port }} -j DROP
+
+    - name: Запуск и активация службы knockd
+      service:
+        name: knockd
+        state: started
+        enabled: yes

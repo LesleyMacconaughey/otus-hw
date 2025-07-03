@@ -1,0 +1,9 @@
+## Настройка OSPF на routers
+# # ==========================================================
+#
+
+# Установка FRR на routers и активация ip_forwarding
+# ==========================================================\
+- name: Install OSPF on routers
+  import_playbook: ospf-install.yml
+

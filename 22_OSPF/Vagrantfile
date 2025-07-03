@@ -1,0 +1,57 @@
+MACHINES = {
+  :router1 => {
+    :box_name => "ubuntu/focal64",
+    :vm_name => "router1",
+    :net => [
+      { type: "private_network", ip: '10.0.10.1', adapter: 2, virtualbox__intnet: "r1-r2" },
+      { type: "private_network", ip: '10.0.12.1', adapter: 3, virtualbox__intnet: "r1-r3" },
+      { type: "private_network", ip: '192.168.10.1', adapter: 4, virtualbox__intnet: "net1" },
+      { type: "private_network", ip: '192.168.50.10', adapter: 5, private_network: "management" }
+    ]
+  },
+  :router2 => {
+    :box_name => "ubuntu/focal64",
+    :vm_name => "router2",
+    :net => [
+      { type: "private_network", ip: '10.0.10.2', adapter: 2, virtualbox__intnet: "r1-r2" },
+      { type: "private_network", ip: '10.0.11.2', adapter: 3, virtualbox__intnet: "r2-r3" },
+      { type: "private_network", ip: '192.168.20.1', adapter: 4, virtualbox__intnet: "net2" },
+      { type: "private_network", ip: '192.168.50.11', adapter: 5, private_network: "management" }
+    ]
+  },
+  :router3 => {
+    :box_name => "ubuntu/focal64",
+    :vm_name => "router3",
+    :net => [
+      { type: "private_network", ip: '10.0.11.1', adapter: 2, virtualbox__intnet: "r2-r3" },
+      { type: "private_network", ip: '10.0.12.2', adapter: 3, virtualbox__intnet: "r1-r3" },
+      { type: "private_network", ip: '192.168.30.1', adapter: 4, virtualbox__intnet: "net3" },
+      { type: "private_network", ip: '192.168.50.12', adapter: 5, private_network: "management" }
+    ]
+  }
+}
+
+Vagrant.configure("2") do |config|
+  # Отключаем симлинки для основной синхронизированной папки
+  config.vm.synced_folder ".", "/vagrant", SharedFoldersEnableSymlinksCreate: false
+
+  MACHINES.each do |boxname, boxconfig|
+    config.vm.define boxname do |box|
+      box.vm.box = boxconfig[:box_name]
+      box.vm.host_name = boxconfig[:vm_name]
+      
+      # Явное имя VM в VirtualBox
+      box.vm.provider "virtualbox" do |vb|
+        vb.name = boxconfig[:vm_name]
+      end
+
+      # Настройка сети
+      boxconfig[:net].each do |net_params|
+        # Создаем копию параметров и извлекаем тип
+        params = net_params.dup
+        network_type = params.delete(:type)
+        box.vm.network network_type, **params
+      end
+    end
+  end
+end

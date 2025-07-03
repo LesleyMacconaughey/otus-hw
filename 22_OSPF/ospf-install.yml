@@ -1,0 +1,35 @@
+# Установка OSPF на Linux-системах
+# ============================
+#
+---
+- name: Install OSPF on Linux systems
+  hosts: all
+  become: true
+  tasks:
+
+    - name: Add FRR repository key
+      apt_key:
+        url: "https://deb.frrouting.org/frr/keys.asc"
+        state: present
+
+    - name: Add FRR repository
+      apt_repository:
+        repo: "deb https://deb.frrouting.org/frr {{ ansible_distribution_release }} frr-stable"
+        state: present
+        filename: frr
+        update_cache: yes
+
+    - name: Install FRR packages
+      apt:
+        name: 
+          - frr
+          - frr-pythontools
+        state: latest
+        update_cache: yes
+
+    - name: Enable IP forwarding
+      sysctl:
+        name: net.ipv4.ip_forward
+        value: '1'
+        state: present
+        reload: yes

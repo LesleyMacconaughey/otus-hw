@@ -7,3 +7,49 @@
 - name: Install OSPF on routers
   import_playbook: ospf-install.yml
 
+# Настройка routers для работы OSPF
+# ==========================================================
+- name: Install additional packages on routers
+  hosts: all
+  become: true
+  tasks:
+
+# Установка прочих пакетов для удобства и диагностики
+    - name: Install additional packages
+      apt:
+        name:
+          - vim
+          - traceroute
+          - tcpdump
+          - net-tools
+        state: present
+        update_cache: true
+
+# Отключение и удаление UFW
+    - name: Disable and stop UFW
+      ufw:
+        state: disabled
+      ignore_errors: true
+    - name: Remove UFW
+      apt:
+        name: ufw
+        state: absent
+      ignore_errors: true
+
+# Меняем настройки daemons FRR
+    - name: Configure FRR daemons
+      lineinfile:
+        path: /etc/frr/daemons
+        regexp: '^{{ item.name }}'
+        line: '{{ item.name }}={{ item.state }}'
+      with_items:
+        - { name: zebra, state: "yes" }
+        - { name: ospfd, state: "yes" }
+      notify: restart frr
+
+  handlers:
+    - name: restart frr
+      service:
+        name: frr
+        state: restarted
+

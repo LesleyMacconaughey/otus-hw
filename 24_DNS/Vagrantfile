@@ -1,61 +1,36 @@
-# -*- mode: ruby -*-
-# vi: set ft=ruby :
+Vagrant.configure(2) do |config|
+  config.vm.box = "almalinux/9"
 
-Vagrant.configure("2") do |config|
-  # Используем официальный образ Ubuntu 22.04 LTS (Jammy Jellyfish)
-  config.vm.box = "centos/7"
-  config.vm.box_version = "2004.01"
-
-  # config.vm.box = "almalinux/8"
-  
-  # config.vm.provision "shell", inline: <<-SHELL
-  #   echo "nameserver 8.8.8.8" > /etc/resolv.conf
-  #   echo "nameserver 1.1.1.1" >> /etc/resolv.conf
-  #   chattr +i /etc/resolv.conf  # Защищаем файл от перезаписи (опционально)
-  # SHELL
-
-  config.vm.provision "shell", inline: <<-SHELL
-    dnf install -y python39 python39-pip
-  SHELL
-  
-  # Настройка Ansible-провижининга
   config.vm.provision "ansible" do |ansible|
     # ansible.verbose = "vvv"
     ansible.playbook = "provisioning/playbook.yml"
-    ansible.become = true  # 'sudo' устарел, используем 'become'
-    ansible.raw_arguments = [
-      "--extra-vars", "ansible_python_interpreter=/usr/bin/python3.9"
-    ]
+    ansible.become = "true"
   end
 
-  # Общие настройки для VirtualBox
+
   config.vm.provider "virtualbox" do |v|
-    v.memory = 1024  # Ubuntu 22.04 требует больше памяти (минимум 1 ГБ)
-    v.cpus = 1       # Добавляем CPU для лучшей производительности
+	  v.memory = 1024
+    v.cpus = 2
   end
 
-  # Первая виртуальная машина (DNS-сервер 1)
   config.vm.define "ns01" do |ns01|
-    ns01.vm.hostname = "ns01"
     ns01.vm.network "private_network", ip: "192.168.50.10", virtualbox__intnet: "dns"
+    ns01.vm.hostname = "ns01"
   end
 
-  # Вторая виртуальная машина (DNS-сервер 2)
   config.vm.define "ns02" do |ns02|
-    ns02.vm.hostname = "ns02"
     ns02.vm.network "private_network", ip: "192.168.50.11", virtualbox__intnet: "dns"
+    ns02.vm.hostname = "ns02"
   end
 
-  # Клиентская машина
   config.vm.define "client" do |client|
-    client.vm.hostname = "client"
     client.vm.network "private_network", ip: "192.168.50.15", virtualbox__intnet: "dns"
+    client.vm.hostname = "client"
   end
 
-   # Клиентская машина 2
   config.vm.define "client2" do |client2|
-    client2.vm.hostname = "client2"
     client2.vm.network "private_network", ip: "192.168.50.16", virtualbox__intnet: "dns"
+    client2.vm.hostname = "client2"
   end
- 
+
 end

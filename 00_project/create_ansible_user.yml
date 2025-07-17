@@ -1,0 +1,69 @@
+---
+- name: "Create ansible user and deploy SSH key"
+  hosts: all  # Можно указать конкретную группу из inventory
+  become: true  # Требуются права root/sudo
+  vars:
+    ansible_user: ansible  # Имя создаваемого пользователя
+    ansible_ssh_key: "/home/{{ ansible_user }}/.ssh/id_ed25519"  # Путь к ключу (можно изменить на RSA)
+    ansible_sudo_nopasswd: true  # Разрешить sudo без пароля (опционально)
+
+  tasks:
+    # 1. Создаём пользователя `ansible`
+    - name: "Create user {{ ansible_user }}"
+      user:
+        name: "{{ ansible_user }}"
+        shell: /bin/bash
+        groups: sudo  # Даём права sudo (можно изменить)
+        append: yes
+        state: present
+
+    # 2. Создаём `.ssh` директорию и выставляем права
+    - name: "Create .ssh directory for {{ ansible_user }}"
+      file:
+        path: "/home/{{ ansible_user }}/.ssh"
+        state: directory
+        mode: 0700
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+
+    # 3. Генерируем SSH-ключ (если его нет)
+    - name: "Generate SSH key for {{ ansible_user }}"
+      openssh_keypair:
+        path: "{{ ansible_ssh_key }}"
+        type: ed25519  # Можно заменить на `rsa -b 4096`
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        mode: 0600
+      register: ssh_key_result
+      when: not lookup('file', ansible_ssh_key, errors='ignore')  # Генерируем, если ключа нет
+
+    # 4. Копируем публичный ключ в authorized_keys
+    - name: "Add public key to authorized_keys"
+      ansible.posix.authorized_key:
+        user: "{{ ansible_user }}"
+        state: present
+        key: "{{ lookup('file', ansible_ssh_key + '.pub') }}"
+
+    # 5. Разрешаем sudo без пароля (опционально)
+    - name: "Allow {{ ansible_user }} to sudo without password"
+      copy:
+        dest: "/etc/sudoers.d/{{ ansible_user }}"
+        content: "{{ ansible_user }} ALL=(ALL) NOPASSWD:ALL"
+        mode: 0440
+      when: ansible_sudo_nopasswd  # Только если включено в vars
+
+    # 6. Убедимся, что можно логиниться по SSH (отключаем парольную аутентификацию)
+    - name: "Disable password authentication for SSH (security)"
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: "^PasswordAuthentication"
+        line: "PasswordAuthentication no"
+        state: present
+      notify:
+        - Restart SSH
+
+  handlers:
+    - name: "Restart SSH"
+      service:
+        name: sshd
+        state: restarted

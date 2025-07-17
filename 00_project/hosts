@@ -1,0 +1,13 @@
+---
+all:
+  hosts:
+    server:
+      ansible_host: 192.168.90.10
+      ansible_port: 22
+      # ansible_user: vagrant
+      # ansible_private_key_file: .vagrant/machines/server/virtualbox/private_key
+    client:
+      ansible_host: 192.168.90.3
+      ansible_port: 22
+      # ansible_user: vagrant
+      # ansible_private_key_file: .vagrant/machines/client/virtualbox/private_key

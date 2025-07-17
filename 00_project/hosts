@@ -1,13 +1,27 @@
 ---
 all:
   hosts:
-    server:
-      ansible_host: 192.168.90.10
-      ansible_port: 22
-      # ansible_user: vagrant
-      # ansible_private_key_file: .vagrant/machines/server/virtualbox/private_key
-    client:
+    web-proxy:
+      ansible_host: 192.168.90.2
+    web-01:
       ansible_host: 192.168.90.3
       ansible_port: 22
-      # ansible_user: vagrant
-      # ansible_private_key_file: .vagrant/machines/client/virtualbox/private_key
+    db-01:
+      ansible_host: 192.168.90.4
+    db-02:
+      ansible_host: 192.168.90.5
+    log_srv:
+      ansible_host: 192.168.90.6
+    backup-srv:
+      ansible_host: 192.168.90.7
+    monitoring-srv:
+      ansible_host: 192.168.90.8
+  children:
+    dbservers:
+      hosts:
+        db-01
+        db-02
+  vars:
+    ansible_user: ansible
+    ansible_port: 22
+    ansible_private_key_file:

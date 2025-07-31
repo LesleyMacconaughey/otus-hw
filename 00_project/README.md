@@ -10,10 +10,33 @@
 - организован централизованный сбор логов;
 - организован backup.
 
-
+## Настройка гипервизора
 В качестве гипервизора виртуальных машин будем использовать Proxmox Virtual Environment
 
 Для обеспечения возможности управлять гипервизором с инженерной станции создадим пользователя ansible на Proxmox и настроим SSH-доступ с возможностью выполнения команд от root (через sudo)
+
+На proxmox сохдадим пользователя
+```sh
+adduser ansible
+```
+
+На инженерной станции (откуда будем подключаться) создадим ssh ключ
+```
+ssh-keygen -t ed25519 -C "ansible@eng"
+```
+Вручную добавим ключ на сервер Proxmox в ~/.ssh/authorized_keys:
+```sh
+mkdir -p /home/ansible/.ssh
+echo "публичный_ключ" >> /home/ansible/.ssh/authorized_keys
+chown -R ansible:ansible /home/ansible/.ssh
+chmod 700 /home/ansible/.ssh
+chmod 600 /home/ansible/.ssh/authorized_keys
+```
+Дадим пользователю права на выполнение любых команд от root без ввода пароля:
+```sh
+echo "ansible ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/ansible
+sudo chmod 440 /etc/sudoers.d/ansible
+```
 
 Для работы будем использовать три сети
 - внешняя сеть proxmox куда будет смотреть веб сервер (80,443 порты)

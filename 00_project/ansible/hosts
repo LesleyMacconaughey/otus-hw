@@ -1,11 +1,12 @@
 ---
 all:
   hosts:
+    pve:
+      ansible_host: 192.168.90.1
     web-proxy:
       ansible_host: 192.168.90.2
     web-01:
       ansible_host: 192.168.90.3
-      ansible_port: 22
     db-01:
       ansible_host: 192.168.90.4
     db-02:

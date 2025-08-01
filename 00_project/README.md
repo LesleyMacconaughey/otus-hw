@@ -68,20 +68,6 @@ sudo chmod 440 /etc/sudoers.d/ansible
 
 В качестве операционной системы для проекта выберем Debian 12. Проведем установку Debian на вновь созданную виртуальную машину и сделаем ее шаблоном, чтобы с помощью копирования быстро содать необходимое количество ВМ.
 
-```sh
-qm create 9000 \
-  --name "debian-12-template" \
-  --memory 2048 \
-  --cores 2 \
-  --net0 virtio,bridge=vmbr0 \
-  --scsihw virtio-scsi-pci \
-  --scsi0 local-lvm:10 \
-  --ostype l26 \
-  --cdrom local:iso/debian-live-12.11.0-amd64-standard.iso \
-  --boot order=scsi0;ide2 \
-  --serial0 socket \
-  --vga serial0
-  ```
 
 Создадим необходимые ВМ с соответствующим функционалом а также присвоим им фиксированные ip адреса во внутренней сети:
 - web-proxy (angie) 192.168.90.2/28

@@ -1,0 +1,79 @@
+---
+- name: Create VMs from template 9000 with fixed IDs (102-108)
+  hosts: localhost  # или ваш Proxmox-сервер
+  gather_facts: false
+  vars:
+    vms:
+      - id: 102
+        name: web-proxy
+        ip: 192.168.90.2/28
+        role: angie
+      - id: 103
+        name: web-01
+        ip: 192.168.90.3/28
+        role: app
+      - id: 104
+        name: db-01
+        ip: 192.168.90.4/28
+        role: master
+      - id: 105
+        name: db-02
+        ip: 192.168.90.5/28
+        role: replica
+      - id: 106
+        name: log-srv
+        ip: 192.168.90.6/28
+      - id: 107
+        name: backup-srv
+        ip: 192.168.90.7/28
+      - id: 108
+        name: monitoring-srv
+        ip: 192.168.90.8/28
+
+    template_id: 9000  # ID шаблона в Proxmox
+    vcpu: 2
+    vram: 2048
+    vdisk: "20G"
+    network_bridge: "vmbr0"
+
+  tasks:
+    - name: Check if VM already exists
+      command: qm config {{ item.id }}
+      register: vm_check
+      ignore_errors: true
+      loop: "{{ vms }}"
+
+    - name: Create VM if it doesn't exist (clone template)
+      command: |
+        qm clone {{ template_id }} {{ item.id }} \
+          --name {{ item.name }} \
+          --full true
+      loop: "{{ vms }}"
+      when: vm_check.results[ansible_loop.index0].rc != 0  # Если ВМ не существует (qm config вернул ошибку)
+      register: clone_result
+
+    - name: Configure VM resources (CPU, RAM, disk)
+      command: |
+        qm set {{ item.id }} \
+          --cores {{ vcpu }} \
+          --memory {{ vram }} \
+          --scsi0 local-lvm:{{ item.id }}/vm-{{ item.id }}-disk-0,size={{ vdisk }}
+      loop: "{{ vms }}"
+      when:
+        - vm_check.results[ansible_loop.index0].rc != 0  # Только если ВМ только что создана
+        - clone_result is changed
+
+    - name: Configure cloud-init (IP, user, DNS)
+      command: |
+        qm set {{ item.id }} \
+          --ipconfig0 ip={{ item.ip }},gw=192.168.90.1 \
+          --ciuser ansible \
+          --cipassword "{{ vaulted_password }}" \
+          --nameserver "8.8.8.8" \
+      loop: "{{ vms }}"
+      when: vm_check.results[ansible_loop.index0].rc != 0  # Только для новых ВМ
+
+    - name: Start the VM (if newly created)
+      command: qm start {{ item.id }}
+      loop: "{{ vms }}"
+      when: vm_check.results[ansible_loop.index0].rc != 0  # Только если ВМ не существовала

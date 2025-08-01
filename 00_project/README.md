@@ -77,8 +77,8 @@ qm create 9000 \
   --scsihw virtio-scsi-pci \
   --scsi0 local-lvm:10 \
   --ostype l26 \
-  --cdrom local:iso/debian-live-12.11.0-amd64-standard.iso \  # Укажите правильный путь к ISO
-  --boot order=scsi0;ide2 \      # Загрузка с диска, затем CD-ROM (для установки)
+  --cdrom local:iso/debian-live-12.11.0-amd64-standard.iso \
+  --boot order=scsi0;ide2 \
   --serial0 socket \
   --vga serial0
   ```

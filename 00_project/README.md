@@ -85,14 +85,35 @@ wget https://cloud.debian.org/images/cloud/bookworm/latest/debian-12-genericclou
 ```
 Создайте ВМ и импортируйте образ:
 ```sh
-qm create 9001 --name "debian-12-cloud" --memory 2048 --cores 2 --net0 virtio,bridge=vmbr0
+qm create 9001 --name debian-12-cloud --memory 2048 --cores 2 --net0 virtio,bridge=otus
 qm importdisk 9001 debian-12-genericcloud-amd64.qcow2 local-lvm
 qm set 9001 --scsihw virtio-scsi-pci --scsi0 local-lvm:vm-9001-disk-0
 qm set 9001 --ide2 local-lvm:cloudinit
 qm set 9001 --boot c --bootdisk scsi0
 qm set 9001 --serial0 socket --vga serial0
-qm set 9001 --agent enabled=1
 ```
+Через веб интерфейс настроим пользователя ansible и ssh ключ. 
+создадим шаблон
+```sh
+qm template 9001
+```
+
+Склонируем шаблон
+```sh
+qm clone 9001 123 --name web-proxy --full
+```
+
+Настроим ip адрес для вм
+```sh
+qm set 123 --ipconfig0 ip=192.168.90.2/28,gw=192.168.90.1
+```
+
+Запускаем вм
+
+```sh
+qm start 123
+```
+
 
 Можно настроить cloud-init перед запуском ВМ через веб интерфейс или с помощью комманд
 ```sh

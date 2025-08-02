@@ -1,6 +1,6 @@
 ---
 - name: Create VMs from template 9000 with fixed IDs (102-108)
-  hosts: localhost  # или ваш Proxmox-сервер
+  hosts: pve
   gather_facts: false
   vars:
     vms:

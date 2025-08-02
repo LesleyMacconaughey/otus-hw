@@ -68,6 +68,90 @@ sudo chmod 440 /etc/sudoers.d/ansible
 
 В качестве операционной системы для проекта выберем Debian 12. Проведем установку Debian на вновь созданную виртуальную машину и сделаем ее шаблоном, чтобы с помощью копирования быстро содать необходимое количество ВМ.
 
+После установки операционной системы остановим ВМ и добавим образ cloud-init
+```sh
+qm set 9000 --ide2 local-lvm:cloudinit
+```
+После чего завершим создание шаблона ВМ
+
+```sh
+qm template 9000
+```
+
+Если выберем вариант создания вм из готового образа cloud-init, то шаги следующие:
+Скачайте образ (например, debian-12-genericcloud-amd64.qcow2):
+```sh
+wget https://cloud.debian.org/images/cloud/bookworm/latest/debian-12-genericcloud-amd64.qcow2
+```
+Создайте ВМ и импортируйте образ:
+```sh
+qm create 9001 --name "debian-12-cloud" --memory 2048 --cores 2 --net0 virtio,bridge=vmbr0
+qm importdisk 9001 debian-12-genericcloud-amd64.qcow2 local-lvm
+qm set 9001 --scsihw virtio-scsi-pci --scsi0 local-lvm:vm-9001-disk-0
+qm set 9001 --ide2 local-lvm:cloudinit
+qm set 9001 --boot c --bootdisk scsi0
+qm set 9001 --serial0 socket --vga serial0
+qm set 9001 --agent enabled=1
+```
+
+Можно настроить cloud-init перед запуском ВМ через веб интерфейс или с помощью комманд
+```sh
+qm set <VMID> --ciuser admin
+qm set <VMID> --cipassword "secure_password"
+qm set <VMID> --sshkeys ~/.ssh/id_rsa.pub
+qm set <VMID> --ipconfig0 ip=dhcp
+# или статический IP:
+qm set <VMID> --ipconfig0 ip=192.168.1.100/24,gw=192.168.1.1
+```
+
+Мы это сделаем с помощью файла user-data. Включаем возможность хранения snippets через веб интерфейс Proxmox разделы Datacenter/Storage. Создаем файл user-data.yaml (например, в /var/lib/vz/snippets/web-proxy.yaml):
+```yaml
+#cloud-config
+users:
+  - name: ansible
+    groups: sudo
+    shell: /bin/bash
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    ssh_authorized_keys:
+      - ssh-rsa AAAAB3NzaC1yc2E...  # публичный SSH-ключ пользователя ansible
+package_update: true
+package_upgrade: true
+packages:
+  - sudo
+  - python3
+  - qemu-guest-agent
+runcmd:
+  - systemctl enable --now qemu-guest-agent
+  - sed -i 's/^#\?PermitRootLogin.*/PermitRootLogin no/' /etc/ssh/sshd_config
+  - sed -i 's/^#\?PasswordAuthentication.*/PasswordAuthentication no/' /etc/ssh/sshd_config
+  - systemctl restart ssh
+  - |
+  cat > /etc/netplan/50-cloud-init.yaml <<EOF
+  network:
+    version: 2
+    ethernets:
+      eth0:
+        dhcp4: no
+        addresses: [192.168.90.2/28]
+        gateway4: 192.168.90.1
+        nameservers:
+          addresses: [8.8.8.8, 8.8.4.4]
+  EOF
+  - netplan apply
+```
+
+Развертываем новую ВМ из шаблона
+```sh
+qm clone 9000 102 --name "web-proxy" --full
+```
+Применяем конфиг user-data:
+```sh
+qm set 102 --cicustom "user=local:snippets/web-proxy.yaml"
+```
+Запускаем ВМ
+```sh
+qm start 102
+```
 
 Создадим необходимые ВМ с соответствующим функционалом а также присвоим им фиксированные ip адреса во внутренней сети:
 - web-proxy (angie) 192.168.90.2/28

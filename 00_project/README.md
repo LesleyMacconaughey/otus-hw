@@ -101,23 +101,23 @@ qm template 9000
 
 Склонируем шаблон
 ```sh
-qm clone 9000 123 --name web-proxy --full
+qm clone 9000 102 --name web-proxy --full
 ```
 
 Настроим ip адрес для вм
 ```sh
-qm set 123 --ipconfig0 ip=192.168.90.2/28,gw=192.168.90.1
+qm set 102 --ipconfig0 ip=192.168.90.2/28,gw=192.168.90.1
 ```
 
 Запускаем вм
 
 ```sh
-qm start 123
+qm start 102
 ```
 
 Чтобы остановить и удалить
  ```sh
- qm stop 123 --skiplock && qm destroy 123 --destroy-unreferenced-disks --purge
+ qm stop 102 --skiplock && qm destroy 102 --destroy-unreferenced-disks --purge
  ```
 
 

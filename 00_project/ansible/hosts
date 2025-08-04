@@ -17,12 +17,13 @@ all:
       ansible_host: 192.168.90.7
     monitoring-srv:
       ansible_host: 192.168.90.8
-  children:
-    dbservers:
-      hosts:
-        - db-01
-        - db-02
+  # children:
+  #   dbservers:
+  #     hosts:
+  #       - db-01
+  #       - db-02
   vars:
     ansible_user: ansible
     ansible_port: 22
     ansible_private_key_file: ~/.ssh/id_ed25519
+    ansible_python_interpreter: /usr/bin/python3

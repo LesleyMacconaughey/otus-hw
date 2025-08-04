@@ -1,0 +1,26 @@
+---
+- name: Destroy VMs on Proxmox
+  hosts: pve
+  gather_facts: no
+  become: yes
+  vars:
+    vm_ids: [102, 103, 104, 105, 106, 107, 108]
+
+  tasks:
+    - name: Stop virtual machines if running
+      ansible.builtin.shell: |
+        /usr/sbin/qm stop {{ item }} --force
+      args:
+        executable: /bin/bash
+      loop: "{{ vm_ids }}"
+      ignore_errors: yes
+      changed_when: false
+
+    - name: Destroy virtual machines
+      ansible.builtin.shell: |
+        /usr/sbin/qm destroy {{ item }}
+      args:
+        executable: /bin/bash
+      loop: "{{ vm_ids }}"
+      register: destroy_result
+      changed_when: destroy_result.rc == 0

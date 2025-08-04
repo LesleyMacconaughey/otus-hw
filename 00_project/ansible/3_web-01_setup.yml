@@ -1,0 +1,6 @@
+---
+- name: web-01 setup
+  hosts: web-01
+  become: true
+  roles:
+    - docker_install

@@ -9,7 +9,7 @@
   tasks:
     - name: Stop virtual machines if running
       ansible.builtin.shell: |
-        /usr/sbin/qm stop {{ item }} --force
+        /usr/sbin/qm stop {{ item }} --skiplock
       args:
         executable: /bin/bash
       loop: "{{ vm_ids }}"
@@ -22,5 +22,6 @@
       args:
         executable: /bin/bash
       loop: "{{ vm_ids }}"
+      ignore_errors: yes
       register: destroy_result
       changed_when: destroy_result.rc == 0

@@ -1,0 +1,56 @@
+---
+- name: Create Proxmox VM template using raw commands
+  hosts: pve
+  become: yes
+  gather_facts: no
+  vars:
+    vm_id: 9000
+    vm_name: "debian-12-cloud"
+    disk_image: "/root/debian-12-genericcloud-amd64.qcow2"
+
+  tasks:
+    - name: Check if VM already exists
+      stat:
+        path: "/etc/pve/nodes/pve/qemu-server/{{ vm_id }}.conf"
+      register: vm_conf
+      ignore_errors: yes
+
+    - name: Create new VM (skip if exists)
+      command: >
+        qm create {{ vm_id }}
+        --name {{ vm_name }}
+        --memory 2048
+        --cores 2
+        --net0 virtio,bridge=otus
+      when: not vm_conf.stat.exists
+
+    - name: Import disk image (skip if already imported)
+      command: >
+        qm importdisk {{ vm_id }} {{ disk_image }} local-lvm
+      args:
+        creates: "/var/lib/vz/images/{{ vm_id }}/vm-{{ vm_id }}-disk-0.raw"
+
+    - name: Configure VM hardware
+      command: >
+        qm set {{ vm_id }}
+        --scsihw virtio-scsi-pci
+        --scsi0 local-lvm:vm-{{ vm_id }}-disk-0
+        --ide2 local-lvm:cloudinit
+        --boot c
+        --bootdisk scsi0
+        --serial0 socket
+        --vga serial0
+
+    - name: Resize disk to 10G
+      command: qm resize {{ vm_id }} scsi0 10G
+
+    # - name: Convert VM to template (if not already a template)
+    #   command: qm template {{ vm_id }}
+    #   when: >
+    #     not vm_conf.stat.exists or
+    #     (vm_conf.stat.exists and
+    #     not lookup('file', "/etc/pve/nodes/pve/qemu-server/{{ vm_id }}.conf").find('template: 1'))
+
+    # - name: Show completion message
+    #   debug:
+    #     msg: "VM template {{ vm_id }} ({{ vm_name }}) has been successfully created"

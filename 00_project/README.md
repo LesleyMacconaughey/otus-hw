@@ -92,6 +92,8 @@ qm set 9000 --scsihw virtio-scsi-pci --scsi0 local-lvm:vm-9000-disk-0
 qm set 9000 --ide2 local-lvm:cloudinit
 qm set 9000 --boot c --bootdisk scsi0
 qm set 9000 --serial0 socket --vga serial0
+qm resize 9000 scsi0 10G
+
 ```
 Через веб интерфейс настроим пользователя ansible и ssh ключ инженерной станции. 
 создадим шаблон
@@ -119,6 +121,10 @@ qm start 102
  ```sh
  qm stop 102 --skiplock && qm destroy 102 --destroy-unreferenced-disks --purge
  ```
+
+
+
+qm set 9000 --ciuser ansible --sshkeys ~/.ssh/id_ed25519.pub
 
 
 Можно настроить cloud-init перед запуском ВМ через веб интерфейс или с помощью комманд

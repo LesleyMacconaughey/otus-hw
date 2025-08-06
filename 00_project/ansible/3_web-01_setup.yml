@@ -2,5 +2,20 @@
 - name: web-01 setup
   hosts: web-01
   become: true
+
   roles:
     - docker_install
+
+  tasks:
+    - name: install usefull packages
+      apt:
+        pkg:
+          - pwgen
+        state: present
+        update_cache: yes
+
+    - name: copy yml
+      
+      
+    
+

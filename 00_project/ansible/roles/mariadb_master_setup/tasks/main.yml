@@ -13,17 +13,14 @@
     enabled: true
 - name: Create root@localhost user
   community.mysql.mysql_user:
+    login_user: root
+    login_password: ""
     name: root
+    password: "{{ mysql_root_password }}"
     host: localhost
-    password: "{{ mysql_root_password }}"
+    # priv: "*.*:ALL,GRANT"
     state: present
-  failed_when: false
-- name: Add root@192.168.90.3 user
-  community.mysql.mysql_user:
-    name: root
-    host: 192.168.90.3
-    password: "{{ mysql_root_password }}"
-    state: present
+  # failed_when: false
 - name: Changing bind-address in /etc/mysql/mariadb.conf.d/50-server.cnf
   ansible.builtin.lineinfile:
     path: /etc/mysql/mariadb.conf.d/50-server.cnf

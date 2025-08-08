@@ -1,10 +1,11 @@
-#SPDX-License-Identifier: MIT-0
+# SPDX-License-Identifier: MIT-0
 ---
 # tasks file for seafile-install
 - name: Create working directory
   ansible.builtin.file:
     path: /opt/seafile
     state: directory
+    mode: '0755'
 
 - name: Download .env configuration
   ansible.builtin.get_url:
@@ -41,3 +42,40 @@
     path: /opt/seafile-caddy
     state: directory
     mode: '0755'
+- name: Copy seafile-server.yml file from files to /opt/seafile
+  ansible.builtin.copy:
+    src: seafile-server.yml
+    dest: /opt/seafile/seafile-server.yml
+    mode: '0644'
+- name: Set SEAFILE_MYSQL_DB_HOST in "/opt/seafile/.env"
+  ansible.builtin.lineinfile:
+    path: /opt/seafile/.env
+    regexp: '^SEAFILE_MYSQL_DB_HOST.*'
+    line: 'SEAFILE_MYSQL_DB_HOST=192.168.90.4'
+- name: Set INIT_SEAFILE_MYSQL_ROOT_PASSWORD in "/opt/seafile/.env"
+  ansible.builtin.lineinfile:
+    path: /opt/seafile/.env
+    regexp: '^INIT_SEAFILE_MYSQL_ROOT_PASSWORD.*'
+    line: 'INIT_SEAFILE_MYSQL_ROOT_PASSWORD=123456'
+- name: Set SEAFILE_MYSQL_DB_PORT in "/opt/seafile/.env"
+  ansible.builtin.lineinfile:
+    path: /opt/seafile/.env
+    regexp: '^SEAFILE_MYSQL_DB_PORT.*'
+    line: 'SEAFILE_MYSQL_DB_PORT=3306'
+- name: Set SEAFILE_MYSQL_DB_PASSWORD in "/opt/seafile/.env"
+  ansible.builtin.lineinfile:
+    path: /opt/seafile/.env
+    regexp: '^SEAFILE_MYSQL_DB_PASSWORD.*'
+    line: 'SEAFILE_MYSQL_DB_PASSWORD=123456'
+
+# - name: Set INIT_SEAFILE_MYSQL_ROOT_PASSWORD in "/opt/seafile/.env"
+#   ansible.builtin.replace:
+#     path: /opt/seafile/.env
+#     regexp: '^INIT_SEAFILE_MYSQL_ROOT_PASSWORD.*'
+#     replace: 'INIT_SEAFILE_MYSQL_ROOT_PASSWORD=123456'
+
+# - name: Set SEAFILE_MYSQL_DB_PASSWORD in "/opt/seafile/.env"
+#   ansible.builtin.replace:
+#     path: /opt/seafile/.env
+#     regexp: '^SEAFILE_MYSQL_DB_PASSWORD.*'
+#     replace: 'SEAFILE_MYSQL_DB_PASSWORD=123456'

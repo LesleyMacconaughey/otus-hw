@@ -11,17 +11,17 @@
     name: mariadb
     state: started
     enabled: true
-# - name: Create root user
-#   community.mysql.mysql_user:
-#     name: root
-#     host: localhost
-#     password: "{{ mysql_root_password }}"
-#     state: present
-#   failed_when: false
-- name: Allow access to db root user from any host
+- name: Create root@localhost user
   community.mysql.mysql_user:
     name: root
-    host: '%'
+    host: localhost
+    password: "{{ mysql_root_password }}"
+    state: present
+  failed_when: false
+- name: Add root@192.168.90.3 user
+  community.mysql.mysql_user:
+    name: root
+    host: 192.168.90.3
     password: "{{ mysql_root_password }}"
     state: present
 - name: Changing bind-address in /etc/mysql/mariadb.conf.d/50-server.cnf

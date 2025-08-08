@@ -1,0 +1,43 @@
+#SPDX-License-Identifier: MIT-0
+---
+# tasks file for seafile-install
+- name: Create working directory
+  ansible.builtin.file:
+    path: /opt/seafile
+    state: directory
+
+- name: Download .env configuration
+  ansible.builtin.get_url:
+    url: "https://manual.seafile.com/12.0/repo/docker/ce/env"
+    dest: "/opt/seafile/.env"
+    mode: '0644'
+- name: Download seadoc docker-compose file
+  ansible.builtin.get_url:
+    url: "https://manual.seafile.com/12.0/repo/docker/seadoc.yml"
+    dest: "/opt/seafile/seadoc.yml"
+    mode: '0644'
+- name: Download seafile-server docker-compose file
+  ansible.builtin.get_url:
+    url: "https://manual.seafile.com/12.0/repo/docker/ce/seafile-server.yml"
+    dest: "/opt/seafile/seafile-server.yml"
+    mode: '0644'
+- name: Download caddy docker-compose file
+  ansible.builtin.get_url:
+    url: "https://manual.seafile.com/12.0/repo/docker/caddy.yml"
+    dest: "/opt/seafile/caddy.yml"
+    mode: '0644'
+- name: Create volume directory of Seafile data
+  ansible.builtin.file:
+    path: /opt/seafile-data
+    state: directory
+    mode: '0755'
+- name: Create volume directory of MySQL data
+  ansible.builtin.file:
+    path: /opt/seafile-mysql/db
+    state: directory
+    mode: '0755'
+- name: Create volume directory of Caddy data
+  ansible.builtin.file:
+    path: /opt/seafile-caddy
+    state: directory
+    mode: '0755'

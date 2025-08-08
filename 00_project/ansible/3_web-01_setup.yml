@@ -8,8 +8,9 @@
       ansible.builtin.apt:
         pkg:
           - pwgen
+          - mc
         state: present
-        update_cache: yes
+        update_cache: true
 
   roles:
     - docker_install

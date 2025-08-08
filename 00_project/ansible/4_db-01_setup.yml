@@ -1,0 +1,9 @@
+---
+- name: DB-01 setup
+  hosts: db-01
+  become: true
+
+  roles:
+    - usefull_pkg_install
+    - mariadb_install
+

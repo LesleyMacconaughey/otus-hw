@@ -1,0 +1,10 @@
+#SPDX-License-Identifier: MIT-0
+---
+# tasks file for usefull_pkg_install
+- name: Install usefull packages
+  ansible.builtin.apt:
+    pkg:
+      - pwgen
+      - mc
+    state: present
+    update_cache: true

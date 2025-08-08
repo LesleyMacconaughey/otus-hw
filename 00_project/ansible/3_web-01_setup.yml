@@ -3,15 +3,7 @@
   hosts: web-01
   become: true
 
-  tasks:
-    - name: Install usefull packages
-      ansible.builtin.apt:
-        pkg:
-          - pwgen
-          - mc
-        state: present
-        update_cache: true
-
   roles:
+    - usefull_pkg_install
     - docker_install
     - seafile_install

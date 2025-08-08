@@ -1,7 +1,7 @@
 ---
 - name: Create and configure VMs on Proxmox
   hosts: pve  # Укажите ваш хост Proxmox в инвентаре
-  gather_facts: no
+  gather_facts: false
   become: yes
   vars:
     template_id: 9000
@@ -35,18 +35,28 @@
         qm clone {{ template_id }} {{ item.vmid }} 
         --name {{ item.name }} 
         --full
-      ignore_errors: yes
+      register: clone_result
+      failed_when: clone_result.rc != 0
       loop: "{{ vms }}"
+      ignore_errors: true
 
     - name: Configure network settings
       ansible.builtin.command: >
         qm set {{ item.vmid }} 
         --ipconfig0 ip={{ item.ip }}/28,gw={{ gateway }}
-      ignore_errors: yes
+      ignore_errors: true
       loop: "{{ vms }}"
 
-    - name: Start virtual machines
-      ansible.builtin.command: >
-        qm start {{ item.vmid }}
-      ignore_errors: yes
+    - name: Start virtual machines if not already running
+      ansible.builtin.shell: |
+        set -o pipefail
+        if ! qm status {{ item.vmid }} | grep -q "status: running"; then
+          qm start {{ item.vmid }}
+        fi
+      args:
+        executable: /bin/bash
+      register: start_vm_result
+      failed_when: start_vm_result.rc != 0
+      changed_when: "'status: running' not in start_vm_result.stdout"
       loop: "{{ vms }}"
+  

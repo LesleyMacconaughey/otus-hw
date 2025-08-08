@@ -1,21 +1,16 @@
 ---
-- name: web-01 setup
+- name: Web-01 setup
   hosts: web-01
   become: true
 
-  roles:
-    - docker_install
-
   tasks:
-    - name: install usefull packages
-      apt:
+    - name: Install usefull packages
+      ansible.builtin.apt:
         pkg:
           - pwgen
         state: present
         update_cache: yes
 
-    - name: copy yml
-      
-      
-    
-
+  roles:
+    - docker_install
+    - seafile_install

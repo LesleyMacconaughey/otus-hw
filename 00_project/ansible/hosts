@@ -2,21 +2,28 @@
 all:
   hosts:
     pve:
-      ansible_host: 192.168.90.1
+      ansible_host: 192.168.80.10
     web-proxy:
       ansible_host: 192.168.90.2
+      ansible_ssh_common_args: '-o ProxyJump=root@192.168.80.10'
     web-01:
       ansible_host: 192.168.90.3
+      ansible_ssh_common_args: '-o ProxyJump=root@192.168.80.10'
     db-01:
       ansible_host: 192.168.90.4
+      ansible_ssh_common_args: '-o ProxyJump=root@192.168.80.10'
     db-02:
       ansible_host: 192.168.90.5
+      ansible_ssh_common_args: '-o ProxyJump=root@192.168.80.10'
     log_srv:
       ansible_host: 192.168.90.6
+      ansible_ssh_common_args: '-o ProxyJump=root@192.168.80.10'
     backup-srv:
       ansible_host: 192.168.90.7
+      ansible_ssh_common_args: '-o ProxyJump=root@192.168.80.10'
     monitoring-srv:
       ansible_host: 192.168.90.8
+      ansible_ssh_common_args: '-o ProxyJump=root@192.168.80.10'
   # children:
   #   dbservers:
   #     hosts:
@@ -25,5 +32,5 @@ all:
   vars:
     ansible_user: ansible
     ansible_port: 22
-    ansible_private_key_file: ~/.ssh/id_ed25519
+    ansible_private_key_file: ~/.ssh/id_rsa
     ansible_python_interpreter: /usr/bin/python3

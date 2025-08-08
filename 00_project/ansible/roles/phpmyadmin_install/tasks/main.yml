@@ -1,0 +1,14 @@
+#SPDX-License-Identifier: MIT-0
+---
+# tasks file for phpmyadmin_install
+- name: Install phpMyAdmin
+  ansible.builtin.apt:
+    name: phpmyadmin
+    state: present
+  when: ansible_facts['os_family'] == 'Debian'
+- name: Create symlink for phpMyAdmin
+  ansible.builtin.file:
+    src: /usr/share/phpmyadmin
+    dest: /var/www/html/phpmyadmin
+    state: link
+  when: ansible_facts['os_family'] == 'Debian'

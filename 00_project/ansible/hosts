@@ -24,11 +24,6 @@ all:
     monitoring-srv:
       ansible_host: 192.168.90.8
       ansible_ssh_common_args: '-o ProxyJump=root@192.168.80.10'
-  # children:
-  #   dbservers:
-  #     hosts:
-  #       - db-01
-  #       - db-02
   vars:
     ansible_user: ansible
     ansible_port: 22

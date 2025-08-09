@@ -14,11 +14,12 @@
 - name: Create root@localhost user
   community.mysql.mysql_user:
     login_user: root
-    login_password: ""
+    login_password: "123456"
+    check_implicit_admin: true
     name: root
     password: "{{ mysql_root_password }}"
-    host: localhost
-    # priv: "*.*:ALL,GRANT"
+    host: "%"
+    priv: "*.*:ALL,GRANT"
     state: present
   # failed_when: false
 - name: Changing bind-address in /etc/mysql/mariadb.conf.d/50-server.cnf

@@ -1,4 +1,5 @@
 #SPDX-License-Identifier: MIT-0
 ---
 # vars file for mariadb_master_setup
-mysql_root_password: 123456
+mariadb_master_setup_seafile_password: 12345
+mariadb_master_setup_root_password: 12345

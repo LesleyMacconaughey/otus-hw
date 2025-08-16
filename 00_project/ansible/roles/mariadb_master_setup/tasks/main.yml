@@ -11,17 +11,25 @@
     name: mariadb
     state: started
     enabled: true
-- name: Create root@localhost user
+- name: Changing root password ignoring when failed
   community.mysql.mysql_user:
-    login_user: root
-    login_password: "123456"
     check_implicit_admin: true
     name: root
-    password: "{{ mysql_root_password }}"
+    password: "{{ mariadb_master_setup_root_password }}"
+    host: "localhost"
+    priv: "*.*:ALL,GRANT"
+    state: present
+  failed_when: false
+- name: Create database user with name 'seafile' and password '12345' with all database privileges
+  community.mysql.mysql_user:
+    login_user: root
+    login_password: "{{ mariadb_master_setup_root_password }}"
+    check_implicit_admin: true
+    name: seafile
+    password: "{{ mariadb_master_setup_seafile_password }}"
     host: "%"
     priv: "*.*:ALL,GRANT"
     state: present
-  # failed_when: false
 - name: Changing bind-address in /etc/mysql/mariadb.conf.d/50-server.cnf
   ansible.builtin.lineinfile:
     path: /etc/mysql/mariadb.conf.d/50-server.cnf

@@ -8,4 +8,3 @@
     - mariadb_install
     - mariadb_master_setup
     - phpmyadmin_install
-

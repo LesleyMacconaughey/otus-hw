@@ -5,5 +5,4 @@
   ansible.builtin.apt:
     name: mariadb-server
     state: present
-  notify: restart mariadb
-
+  notify: Restart mariadb

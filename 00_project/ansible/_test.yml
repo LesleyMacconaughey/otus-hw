@@ -1,0 +1,7 @@
+---
+- name: MySQL installation
+  hosts: db-01
+  become: true
+
+  roles:
+    - mysql_install

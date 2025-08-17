@@ -4,6 +4,6 @@
   become: true
 
   roles:
-    - usefull_pkg_install
+#    - usefull_pkg_install
     - docker_install
     - seafile_install

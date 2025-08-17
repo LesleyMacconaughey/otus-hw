@@ -1,0 +1,11 @@
+#SPDX-License-Identifier: MIT-0
+---
+# handlers file for mysql_source_setup
+- name: Restart mysql
+  ansible.builtin.service:
+    name: mysql
+    state: restarted
+  when: ansible_facts['pkg_mgr'] == 'apt' and ansible_facts['distribution'] == 'Ubuntu'
+  tags:
+    - mysql
+    - restart

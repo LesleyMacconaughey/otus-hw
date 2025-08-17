@@ -1,6 +1,6 @@
 #SPDX-License-Identifier: MIT-0
 ---
-# tasks file for mariadb_master_setup
+# tasks file for mysql_source_setup
 - name: Install python3-mysqldb
   ansible.builtin.apt:
     name: python3-mysqldb
@@ -15,7 +15,7 @@
   community.mysql.mysql_user:
     check_implicit_admin: true
     name: root
-    password: "{{ mariadb_master_setup_root_password }}"
+    password: "{{ mysql_source_setup_root_password }}"
     host: "localhost"
     priv: "*.*:ALL,GRANT"
     state: present
@@ -23,10 +23,10 @@
 - name: Create root user with all database privileges
   community.mysql.mysql_user:
     login_user: root
-    login_password: "{{ mariadb_master_setup_root_password }}"
+    login_password: "{{ mysql_source_setup_root_password }}"
     check_implicit_admin: true
     name: root
-    password: "{{ mariadb_master_setup_root_password }}"
+    password: "{{ mysql_source_setup_root_password }}"
     host: "%"
     priv: "*.*:ALL,GRANT"
     state: present
@@ -45,4 +45,4 @@
     path: /etc/mysql/mariadb.conf.d/50-server.cnf
     regexp: '^bind-address'
     line: 'bind-address = 0.0.0.0'
-  notify: Restart MariaDB
+  notify: Restart mysql

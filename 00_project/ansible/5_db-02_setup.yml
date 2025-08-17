@@ -6,4 +6,4 @@
   roles:
     - usefull_pkg_install
     - mariadb_install
-
+    - phpmyadmin_install

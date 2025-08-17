@@ -1,9 +1,7 @@
 Role Name
 =========
 
-Названия баз данных для репликации
-seafile_db
-seahub_db
+A brief description of the role goes here.
 
 Requirements
 ------------

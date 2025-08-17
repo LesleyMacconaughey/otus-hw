@@ -1,0 +1,21 @@
+#SPDX-License-Identifier: MIT-0
+---
+# tasks file for mysql_install
+- name: Download MySQL deb package
+  ansible.builtin.get_url:
+    url: "https://repo.mysql.com//mysql-apt-config_0.8.34-1_all.deb"
+    dest: /tmp/mysql.deb
+    mode: '0644'
+    validate_certs: false
+    checksum: "md5:ab23dec6619a7e65e8462646936ee49f"
+- name: Install mysql-apt-config
+  ansible.builtin.apt:
+    deb: /tmp/mysql.deb
+    state: present
+- name: Update apt cache
+  ansible.builtin.apt:
+    update_cache: true
+- name: Install MySQL server
+  ansible.builtin.apt:
+    name: mysql-server
+    state: present

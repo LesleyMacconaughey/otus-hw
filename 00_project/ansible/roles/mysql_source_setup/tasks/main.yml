@@ -6,11 +6,13 @@
     name: python3-mysqldb
     state: present
   when: ansible_facts['os_family'] == 'Debian'
-- name: Ensure MariaDB is running
-  ansible.builtin.service:
-    name: mariadb
-    state: started
-    enabled: true
+- name: Configure MySQL to use mysql_native_password
+  ansible.builtin.lineinfile:
+    path: /etc/mysql/my.cnf
+    insertafter: '^\[mysqld\]'
+    line: 'default-authentication-plugin=mysql_native_password'
+    state: present
+  notify: Restart mysql  # Перезапуск MySQL для применения изменений
 - name: Changing root password ignoring when failed
   community.mysql.mysql_user:
     check_implicit_admin: true
@@ -19,6 +21,7 @@
     host: "localhost"
     priv: "*.*:ALL,GRANT"
     state: present
+    login_unix_socket: /var/run/mysqld/mysqld.sock
   failed_when: false
 - name: Create root user with all database privileges
   community.mysql.mysql_user:
@@ -30,6 +33,7 @@
     host: "%"
     priv: "*.*:ALL,GRANT"
     state: present
+    login_unix_socket: /var/run/mysqld/mysqld.sock
 # - name: Create database user with name 'seafile' and password '12345' with all database privileges
 #   community.mysql.mysql_user:
 #     login_user: root

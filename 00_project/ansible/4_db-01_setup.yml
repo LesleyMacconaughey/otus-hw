@@ -7,4 +7,4 @@
     - usefull_pkg_install
     - mysql_install
     - phpmyadmin_install
-    - mysql_master_setup
+    - mysql_source_setup

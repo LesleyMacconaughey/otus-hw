@@ -1,8 +1,0 @@
-#SPDX-License-Identifier: MIT-0
----
-# tasks file for mariadb_install
-- name: Install MariaDB
-  ansible.builtin.apt:
-    name: mariadb-server
-    state: present
-  notify: Restart mariadb

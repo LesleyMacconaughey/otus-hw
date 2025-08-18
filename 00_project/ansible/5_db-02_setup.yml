@@ -4,6 +4,7 @@
   become: true
 
   roles:
-    - usefull_pkg_install
-    - mariadb_install
+    - mysql_install
     - phpmyadmin_install
+    - mysql_replica_setup
+

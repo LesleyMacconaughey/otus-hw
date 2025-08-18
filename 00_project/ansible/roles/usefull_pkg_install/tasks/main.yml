@@ -4,7 +4,7 @@
 - name: Install usefull packages
   ansible.builtin.apt:
     pkg:
-      - pwgen
+#      - pwgen
       - mc
     state: present
     update_cache: true

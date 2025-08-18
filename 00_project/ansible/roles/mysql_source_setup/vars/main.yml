@@ -3,3 +3,4 @@
 # vars file for mysql_source_setup
 mysql_source_setup_seafile_password: 12345
 mysql_source_setup_root_password: 12345
+mysql_source_setup_repl_password: 12345

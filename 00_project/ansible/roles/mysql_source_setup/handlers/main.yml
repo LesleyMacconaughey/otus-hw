@@ -5,7 +5,3 @@
   ansible.builtin.service:
     name: mysql
     state: restarted
-  when: ansible_facts['pkg_mgr'] == 'apt' and ansible_facts['distribution'] == 'Ubuntu'
-  tags:
-    - mysql
-    - restart

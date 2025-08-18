@@ -49,36 +49,22 @@
     path: /opt/notification-data
     state: directory
     mode: '0755'
-#
-# - name: Set SEAFILE_MYSQL_DB_HOST in "/opt/seafile/.env"
-#   ansible.builtin.lineinfile:
-#     path: /opt/seafile/.env
-#     regexp: '^SEAFILE_MYSQL_DB_HOST.*'
-#     line: 'SEAFILE_MYSQL_DB_HOST=192.168.90.4'
-# - name: Set INIT_SEAFILE_MYSQL_ROOT_PASSWORD in "/opt/seafile/.env"
-#   ansible.builtin.lineinfile:
-#     path: /opt/seafile/.env
-#     regexp: '^INIT_SEAFILE_MYSQL_ROOT_PASSWORD.*'
-#     line: 'INIT_SEAFILE_MYSQL_ROOT_PASSWORD=123456'
-# - name: Set SEAFILE_MYSQL_DB_PORT in "/opt/seafile/.env"
-#   ansible.builtin.lineinfile:
-#     path: /opt/seafile/.env
-#     regexp: '^SEAFILE_MYSQL_DB_PORT.*'
-#     line: 'SEAFILE_MYSQL_DB_PORT=3306'
-# - name: Set SEAFILE_MYSQL_DB_PASSWORD in "/opt/seafile/.env"
-#   ansible.builtin.lineinfile:
-#     path: /opt/seafile/.env
-#     regexp: '^SEAFILE_MYSQL_DB_PASSWORD.*'
-#     line: 'SEAFILE_MYSQL_DB_PASSWORD=123456'
 
-# - name: Set INIT_SEAFILE_MYSQL_ROOT_PASSWORD in "/opt/seafile/.env"
-#   ansible.builtin.replace:
-#     path: /opt/seafile/.env
-#     regexp: '^INIT_SEAFILE_MYSQL_ROOT_PASSWORD.*'
-#     replace: 'INIT_SEAFILE_MYSQL_ROOT_PASSWORD=123456'
+# - name: Pull Docker images
+#   community.docker.docker_compose:
+#     project_src: /opt/seafile
+#     pull: true
 
-# - name: Set SEAFILE_MYSQL_DB_PASSWORD in "/opt/seafile/.env"
-#   ansible.builtin.replace:
-#     path: /opt/seafile/.env
-#     regexp: '^SEAFILE_MYSQL_DB_PASSWORD.*'
-#     replace: 'SEAFILE_MYSQL_DB_PASSWORD=123456'
+# - name: Start Docker containers
+#   community.docker.docker_compose:
+#     project_src: /opt/seafile
+#     build: true
+#     state: present   # или `state: started`
+#     restarted: true  # правильный параметр
+
+- name: Run docker-compose to start Seafile services
+  ansible.builtin.command:
+    cmd: docker compose up -d
+    chdir: /opt/seafile
+#   register: seafile_compose_output
+#   ignore_errors: yes

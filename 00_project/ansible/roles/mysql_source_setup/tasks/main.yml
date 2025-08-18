@@ -1,18 +1,25 @@
 #SPDX-License-Identifier: MIT-0
 ---
 # tasks file for mysql_source_setup
-- name: Install python3-mysqldb
+- name: Install packages
   ansible.builtin.apt:
-    name: python3-mysqldb
+    name:
+      # - python3-mysqldb
+      - python3-pymysql
     state: present
   when: ansible_facts['os_family'] == 'Debian'
 - name: Configure MySQL to use mysql_native_password
   ansible.builtin.lineinfile:
-    path: /etc/mysql/my.cnf
+    path: /etc/mysql/mysql.conf.d/mysqld.cnf
     insertafter: '^\[mysqld\]'
-    line: 'default-authentication-plugin=mysql_native_password'
+    line: 'mysql_native_password=ON'
     state: present
   notify: Restart mysql  # Перезапуск MySQL для применения изменений
+- name: Restart mysql
+  ansible.builtin.systemd:
+    name: mysql
+    state: restarted
+  when: ansible_facts['os_family'] == 'Debian'
 - name: Changing root password ignoring when failed
   community.mysql.mysql_user:
     check_implicit_admin: true
@@ -34,19 +41,45 @@
     priv: "*.*:ALL,GRANT"
     state: present
     login_unix_socket: /var/run/mysqld/mysqld.sock
-# - name: Create database user with name 'seafile' and password '12345' with all database privileges
-#   community.mysql.mysql_user:
-#     login_user: root
-#     login_password: "{{ mariadb_master_setup_root_password }}"
-#     check_implicit_admin: true
-#     name: seafile
-#     password: "{{ mariadb_master_setup_seafile_password }}"
-#     host: "%"
-#     priv: "*.*:ALL,GRANT"
-#     state: present
-- name: Changing bind-address in /etc/mysql/mariadb.conf.d/50-server.cnf
+- name: Create database user with name 'seafile' and password '12345' with all database privileges
+  community.mysql.mysql_user:
+    login_user: root
+    login_password: "{{ mysql_source_setup_root_password }}"
+    check_implicit_admin: true
+    name: seafile
+    password: "{{ mysql_source_setup_seafile_password }}"
+    host: "%"
+    priv: "*.*:ALL,GRANT"
+    state: present
+- name: Create database user with name 'repl' and password '12345' with all database privileges
+  community.mysql.mysql_user:
+    login_user: root
+    login_password: "{{ mysql_source_setup_root_password }}"
+    check_implicit_admin: true
+    name: repl
+    password: "{{ mysql_source_setup_repl_password }}"
+    host: "%"
+    priv: "*.*:ALL,GRANT"
+    state: present
+- name: Add bind-address in /etc/mysql/mysql.conf.d/mysqld.cnf
   ansible.builtin.lineinfile:
-    path: /etc/mysql/mariadb.conf.d/50-server.cnf
-    regexp: '^bind-address'
+    path: /etc/mysql/mysql.conf.d/mysqld.cnf
     line: 'bind-address = 0.0.0.0'
+    state: present
+  notify: Restart mysql
+
+- name: Ensure MySQL replication parameters are set
+  ansible.builtin.lineinfile:
+    path: /etc/mysql/mysql.conf.d/mysqld.cnf
+    line: "{{ item.value }}"
+    regexp: "^\\s*{{ item.key }}\\b"
+    insertafter: "^\\[mysqld\\]"
+    state: present
+  loop:
+    - { key: "server-id", value: "server-id = 1" }
+    - { key: "log_bin", value: "log_bin = mysql-bin" }
+    - { key: "binlog_format", value: "binlog_format = row" }
+    - { key: "gtid_mode", value: "gtid_mode = ON" }
+    - { key: "enforce-gtid-consistency", value: "enforce-gtid-consistency = ON" }
+    - { key: "log-replica-updates", value: "log-replica-updates = ON" }
   notify: Restart mysql

@@ -1,5 +1,7 @@
 ---
 - name: Configure db-01 vm
   import_playbook: 4_db-01_setup.yml
+- name: Configure db-02 vm
+  import_playbook: 5_db-02_setup.yml
 - name: Configure seafile vm
   import_playbook: 3_web-01_setup.yml

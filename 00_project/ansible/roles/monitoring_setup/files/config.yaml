@@ -1,0 +1,40 @@
+alerting:
+  telegram:
+    token: "6655727844:AAFgr2UsOuoDrwoLVffvLnMUnwXqI5YaUkE"
+    id: "1067340932"
+
+endpoints:
+  - name: web-proxy
+    url: "icmp://192.168.90.2"
+    conditions:
+      - "[CONNECTED] == true"
+
+  - name: web-01
+    url: "icmp://192.168.90.3"
+    conditions:
+      - "[CONNECTED] == true"
+
+  - name: db-01
+    url: "icmp://192.168.90.4"
+    conditions:
+      - "[CONNECTED] == true"
+
+  - name: db-02
+    url: "icmp://192.168.90.5"
+    conditions:
+      - "[CONNECTED] == true"
+
+  - name: log_srv
+    url: "icmp://192.168.90.6"
+    conditions:
+      - "[CONNECTED] == true"
+
+  - name: backup-srv
+    url: "icmp://192.168.90.7"
+    conditions:
+      - "[CONNECTED] == true"
+
+  - name: monitoring-srv
+    url: "icmp://192.168.90.8"
+    conditions:
+      - "[CONNECTED] == true"

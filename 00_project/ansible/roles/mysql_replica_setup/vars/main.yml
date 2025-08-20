@@ -1,3 +1,7 @@
 #SPDX-License-Identifier: MIT-0
 ---
 # vars file for mysql_replica_setup
+mysql_replica_setup_seafile_password: 12345
+mysql_replica_setup_root_password: 12345
+mysql_replica_setup_repl_password: 12345
+mysql_replica_setup_replicate_databases: ['seafile_db', 'seahub_db', 'ccnet_db']

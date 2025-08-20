@@ -1,0 +1,9 @@
+---
+- name: Monitoring node setup
+  hosts: monitoring-srv
+  become: true
+
+  roles:
+    - docker_install
+    - monitoring_setup
+

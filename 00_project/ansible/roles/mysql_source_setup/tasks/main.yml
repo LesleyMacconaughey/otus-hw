@@ -83,3 +83,7 @@
     - { key: "enforce-gtid-consistency", value: "enforce-gtid-consistency = ON" }
     - { key: "log-replica-updates", value: "log-replica-updates = ON" }
   notify: Restart mysql
+- name: Restart mysql
+  ansible.builtin.systemd:
+    name: mysql
+    state: restarted

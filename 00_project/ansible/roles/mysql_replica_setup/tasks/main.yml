@@ -1,3 +1,97 @@
 #SPDX-License-Identifier: MIT-0
 ---
 # tasks file for mysql_replica_setup
+- name: Install packages
+  ansible.builtin.apt:
+    name:
+      # - python3-mysqldb
+      - python3-pymysql
+    state: present
+  when: ansible_facts['os_family'] == 'Debian'
+- name: Configure MySQL to use mysql_native_password
+  ansible.builtin.lineinfile:
+    path: /etc/mysql/mysql.conf.d/mysqld.cnf
+    insertafter: '^\[mysqld\]'
+    line: 'mysql_native_password=ON'
+    state: present
+  notify: Restart mysql  # Перезапуск MySQL для применения изменений
+- name: Restart mysql
+  ansible.builtin.systemd:
+    name: mysql
+    state: restarted
+  when: ansible_facts['os_family'] == 'Debian'
+- name: Changing root password ignoring when failed
+  community.mysql.mysql_user:
+    check_implicit_admin: true
+    name: root
+    password: "{{ mysql_replica_setup_root_password }}"
+    host: "localhost"
+    priv: "*.*:ALL,GRANT"
+    state: present
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+  failed_when: false
+- name: Create root user with all database privileges
+  community.mysql.mysql_user:
+    login_user: root
+    login_password: "{{ mysql_replica_setup_root_password }}"
+    check_implicit_admin: true
+    name: root
+    password: "{{ mysql_replica_setup_root_password }}"
+    host: "%"
+    priv: "*.*:ALL,GRANT"
+    state: present
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+- name: Add bind-address in /etc/mysql/mysql.conf.d/mysqld.cnf
+  ansible.builtin.lineinfile:
+    path: /etc/mysql/mysql.conf.d/mysqld.cnf
+    line: 'bind-address = 0.0.0.0'
+    state: present
+  notify: Restart mysql
+- name: Ensure MySQL replication parameters are set
+  ansible.builtin.lineinfile:
+    path: /etc/mysql/mysql.conf.d/mysqld.cnf
+    line: "{{ item.value }}"
+    regexp: "^\\s*{{ item.key }}\\b"
+    insertafter: "^\\[mysqld\\]"
+    state: present
+  loop:
+    - { key: "server-id", value: "server-id = 2" }
+    - { key: "log_bin", value: "log_bin = mysql-bin" }
+    - { key: "relay-log", value: "relay-log = relay-log-server" }
+    # - { key: "read-only", value: "read-only = ON" }
+    - { key: "gtid_mode", value: "gtid_mode = ON" }
+    - { key: "enforce-gtid-consistency", value: "enforce-gtid-consistency = ON" }
+    - { key: "log-replica-updates", value: "log-replica-updates = ON" }
+  notify: Restart mysql
+- name: Restart mysql
+  ansible.builtin.systemd:
+    name: mysql
+    state: restarted
+- name: Stop replica
+  community.mysql.mysql_query:
+    login_user: root
+    login_password: "{{ mysql_replica_setup_root_password }}"
+    query: "STOP REPLICA;"
+- name: Configure replication source
+  community.mysql.mysql_query:
+    login_user: root
+    login_password: "{{ mysql_replica_setup_root_password }}"
+    query: >
+      CHANGE REPLICATION SOURCE TO
+      SOURCE_HOST='192.168.90.4',
+      SOURCE_USER='repl',
+      SOURCE_PASSWORD='{{ mysql_replica_setup_repl_password }}',
+      SOURCE_AUTO_POSITION = 1,
+      GET_SOURCE_PUBLIC_KEY = 1;
+
+- name: Set replication filters for each database
+  community.mysql.mysql_query:
+    login_user: "root"
+    login_password: "{{ mysql_replica_setup_root_password }}"
+    query: "CHANGE REPLICATION FILTER REPLICATE_DO_DB = ({{ mysql_replica_setup_replicate_databases | join(', ') }});"
+
+- name: Start replica
+  ansible.builtin.mysql_query:
+    login_user: root
+    login_password: "{{ mysql_replica_setup_root_password }}"
+    query: "START REPLICA;"

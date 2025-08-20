@@ -1,0 +1,33 @@
+#SPDX-License-Identifier: MIT-0
+---
+# tasks file for monitoring_setup
+- name: Create config directory
+  ansible.builtin.file:
+    path: /opt/gatus
+    state: directory
+    mode: '0755'
+
+- name: Copy config file
+  ansible.builtin.copy:
+    src: config.yaml
+    dest: /opt/gatus/config.yaml
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Stop docker gatus
+  ansible.builtin.command:
+    cmd: docker stop gatus
+    chdir: /opt/gatus
+
+- name: Remove old container
+  ansible.builtin.command:
+    cmd: docker rm gatus
+    chdir: /opt/gatus
+
+- name: Start docker gatus
+  ansible.builtin.command:
+    cmd: |
+      docker run -p 8080:8080 -d --mount type=bind,source=/opt/gatus/config.yaml,target=/config/config.yaml --name gatus twinproduction/gatus
+    chdir: /opt/gatus
+

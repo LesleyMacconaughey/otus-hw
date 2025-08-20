@@ -1,3 +1,9 @@
 #SPDX-License-Identifier: MIT-0
 ---
 # handlers file for mysql_replica_setup
+- name: Restart mysql
+  ansible.builtin.systemd:
+    name: mysql
+    state: restarted
+  when: ansible_facts['os_family'] == 'Debian'
+  listen: Restart mysql  # Слушаем уведомление от задачи перезапуска MySQL

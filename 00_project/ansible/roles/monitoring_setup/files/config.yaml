@@ -2,39 +2,82 @@ alerting:
   telegram:
     token: "6655727844:AAFgr2UsOuoDrwoLVffvLnMUnwXqI5YaUkE"
     id: "1067340932"
+    default: true
 
 endpoints:
   - name: web-proxy
+    group: pve-findarling
     url: "icmp://192.168.90.2"
+    interval: 10s
     conditions:
       - "[CONNECTED] == true"
+    alerts:
+      - type: telegram
+        enabled: true
+        send-on-resolved: true
 
   - name: web-01
+    group: pve-findarling
     url: "icmp://192.168.90.3"
+    interval: 10s
     conditions:
       - "[CONNECTED] == true"
+    alerts:
+      - type: telegram
+        enabled: true
+        send-on-resolved: true
 
   - name: db-01
+    group: pve-findarling
     url: "icmp://192.168.90.4"
+    interval: 10s
     conditions:
       - "[CONNECTED] == true"
+    alerts:
+      - type: telegram
+        enabled: true
+        send-on-resolved: true
 
   - name: db-02
+    group: pve-findarling
     url: "icmp://192.168.90.5"
+    interval: 10s
     conditions:
       - "[CONNECTED] == true"
+    alerts:
+      - type: telegram
+        enabled: true
+        send-on-resolved: true
 
   - name: log_srv
+    group: pve-findarling
     url: "icmp://192.168.90.6"
+    interval: 10s
     conditions:
       - "[CONNECTED] == true"
+    alerts:
+      - type: telegram
+        enabled: true
+        send-on-resolved: true
 
   - name: backup-srv
+    group: pve-findarling
     url: "icmp://192.168.90.7"
+    interval: 10s
     conditions:
       - "[CONNECTED] == true"
+    alerts:
+      - type: telegram
+        enabled: true
+        send-on-resolved: true
 
   - name: monitoring-srv
+    group: pve-findarling
     url: "icmp://192.168.90.8"
+    interval: 10s
     conditions:
       - "[CONNECTED] == true"
+    alerts:
+      - type: telegram
+        enabled: true
+        send-on-resolved: true

@@ -6,4 +6,5 @@
   roles:
 #    - usefull_pkg_install
     - docker_install
+    - hostsfile_add_info
     - seafile_install

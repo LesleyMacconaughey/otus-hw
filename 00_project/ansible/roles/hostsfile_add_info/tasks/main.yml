@@ -1,0 +1,11 @@
+#SPDX-License-Identifier: MIT-0
+---
+# tasks file for hostsfile_add_info
+- name: Add entry to /etc/hosts
+  ansible.builtin.lineinfile:
+    path: /etc/hosts
+    line: "{{ item }}"
+    state: present
+  loop:
+    - "192.168.90.2 seafile.lan"
+    - "192.168.90.4 seafile-db.lan"

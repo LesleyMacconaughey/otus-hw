@@ -1,0 +1,13 @@
+#SPDX-License-Identifier: MIT-0
+---
+# vars file for angie_install
+server_name: "seafile.lan"         # переопределяйте через -e
+upstream_url: "https://192.168.90.3"
+ssl_dir: "/etc/angie/ssl"
+cert_key_path: "{{ ssl_dir }}/{{ server_name }}.key"
+cert_csr_path: "{{ ssl_dir }}/{{ server_name }}.csr"
+cert_crt_path: "{{ ssl_dir }}/{{ server_name }}.crt"
+country: "RU"
+state: "St.Petersburg"
+locality: "St.Petersburg"
+org: "Local Test"

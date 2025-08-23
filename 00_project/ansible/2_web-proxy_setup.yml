@@ -1,0 +1,7 @@
+---
+- name: Web-proxy setup
+  hosts: web-proxy
+  become: true
+  roles:
+    - angie_install
+

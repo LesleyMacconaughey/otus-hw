@@ -28,30 +28,21 @@
     src: caddy.yml
     dest: /opt/seafile/caddy.yml
     mode: '0644'
-# Create volume directory of Seafile data
+# Create directory of Seafile data
 - name: Create volume directory of Seafile data
   ansible.builtin.file:
-    path: /opt/seafile-data
+    path: "{{ item }}"
     state: directory
     mode: '0755'
-- name: Create volume directory of MySQL data
-  ansible.builtin.file:
-    path: /opt/seafile-mysql/db
-    state: directory
-    mode: '0755'
-- name: Create volume directory of Caddy data
-  ansible.builtin.file:
-    path: /opt/seafile-caddy/certs
-    state: directory
-    mode: '0755'
-
-
-
-- name: Create volume directory of notification data
-  ansible.builtin.file:
-    path: /opt/notification-data
-    state: directory
-    mode: '0755'
+  loop:
+    - /opt/seafile-data
+    - /opt/seafile-mysql/db
+    - /opt/notification-data
+    - /opt/seafile-caddy
+- name: Create /opt/seafile-caddy/certs/cert.pem
+  ansible.builtin.command:
+    cmd: openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /opt/seafile-caddy/private/{{ server_name }}.key -out /opt/seafile-caddy/certs/{{ server_name }}.crt -subj "/C=RU/ST=St.Peter/L=St.Peter/O=MyCompany/OU=IT/CN={{ server_name }}"
+    chdir: /opt/seafile-caddy/certs/
 
 # - name: Pull Docker images
 #   community.docker.docker_compose:

@@ -1,0 +1,61 @@
+---
+- name: Create and configure VMs on Proxmox
+  hosts: pve
+  gather_facts: false
+  become: true
+  vars:
+    template_id: 9000
+    gateway: 192.168.90.1
+    vms:
+      - name: web-proxy
+        vmid: 102
+        ip: 192.168.90.2
+      - name: web-01
+        vmid: 103
+        ip: 192.168.90.3
+      - name: db-01
+        vmid: 104
+        ip: 192.168.90.4
+      - name: db-02
+        vmid: 105
+        ip: 192.168.90.5
+      - name: log-srv
+        vmid: 106
+        ip: 192.168.90.6
+      - name: backup-srv
+        vmid: 107
+        ip: 192.168.90.7
+      - name: monitoring-srv
+        vmid: 108
+        ip: 192.168.90.8
+
+  tasks:
+    - name: Ensure VMs exist and configured
+      block:
+        - name: Clone VM from template if not exists
+          ansible.builtin.command: >
+            qm clone {{ template_id }} {{ item.vmid }} --name {{ item.name }} --full
+          register: clone_result
+          failed_when: clone_result.rc != 0 and "already exists" not in clone_result.stderr
+          loop: "{{ vms }}"
+
+        - name: Configure network for VM
+          ansible.builtin.command: >
+            qm set {{ item.vmid }} --ipconfig0 ip={{ item.ip }}/28,gw={{ gateway }}
+          loop: "{{ vms }}"
+
+        # - name: Start VM if not running
+        #   ansible.builtin.command: >
+        #     qm start {{ item.vmid }}
+        #   when: >
+        #     "'status: running' not in lookup('pipe', 'qm status ' + item.vmid|string)"
+        #   loop: "{{ vms }}"
+
+        - name: Start VM if not running
+          ansible.builtin.shell: |
+            if ! qm status {{ item.vmid }} | grep -q "status: running"; then
+              qm start {{ item.vmid }}
+            fi
+          args:
+            executable: /bin/bash
+          loop: "{{ vms }}"

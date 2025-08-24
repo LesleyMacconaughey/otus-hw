@@ -29,3 +29,15 @@ all:
     ansible_port: 22
     ansible_private_key_file: ~/.ssh/id_rsa
     ansible_python_interpreter: /usr/bin/python3
+  children:
+    logserver:
+      hosts:
+        log_srv:
+    logclients:
+      hosts:
+        web-proxy:
+        web-01:
+        db-01:
+        db-02:
+        backup-srv:
+        monitoring-srv:

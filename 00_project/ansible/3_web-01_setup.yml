@@ -4,7 +4,7 @@
   become: true
 
   roles:
-#    - usefull_pkg_install
+    - log_client_setup
     - docker_install
     - hostsfile_add_info
     - seafile_install

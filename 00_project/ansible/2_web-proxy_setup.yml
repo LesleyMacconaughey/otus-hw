@@ -3,5 +3,6 @@
   hosts: web-proxy
   become: true
   roles:
+    - log_client_setup
     - angie_install
 

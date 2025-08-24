@@ -4,6 +4,7 @@
   become: true
 
   roles:
+    - log_client_setup
     - docker_install
     - monitoring_setup
 

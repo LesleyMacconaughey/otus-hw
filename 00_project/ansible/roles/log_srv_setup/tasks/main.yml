@@ -1,0 +1,41 @@
+#SPDX-License-Identifier: MIT-0
+---
+# tasks file for log_srv_setup
+- name: Install rsyslog, chrony
+  ansible.builtin.apt:
+    name:
+      - rsyslog
+      - chrony
+    state: present
+    update_cache: true
+
+- name: Запускаем и добавляем в автозагрузку
+  ansible.builtin.service:
+    name: "{{ item }}"
+    state: started
+    enabled: true
+  loop:
+    - chrony
+    - rsyslog
+
+- name: Deploy rsyslog server config
+  ansible.builtin.template:
+    src: rsyslog-server.conf.j2
+    dest: /etc/rsyslog.d/10-server.conf
+    owner: root
+    group: root
+    mode: "0644"
+
+# - name: Create log directory for remote logs
+#   ansible.builtin.file:
+#     path: /var/log/remote
+#     state: directory
+#     owner: syslog
+#     group: adm
+#     mode: "0755"
+
+- name: Ensure rsyslog is restarted
+  ansible.builtin.systemd:
+    name: rsyslog
+    state: restarted
+    enabled: true

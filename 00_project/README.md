@@ -204,6 +204,11 @@ qm start 102
 192.168.90.7 backup-srv
 192.168.90.8 monitoring-srv
 
+Проброс портов до обратного прокси на гипервизоре осуществим с помощью iptables
+```sh
+iptables -t nat -A PREROUTING -i vmbr0 -p tcp --dport 80 -j DNAT --to-destination 192.168.90.2:80
+iptables -t nat -A PREROUTING -i vmbr0 -p tcp --dport 443 -j DNAT --to-destination 192.168.90.2:443
+```
 
 ## Настройка web-01 (app) 192.168.90.3/28
 

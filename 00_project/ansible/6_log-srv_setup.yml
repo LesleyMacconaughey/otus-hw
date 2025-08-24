@@ -1,0 +1,7 @@
+---
+- name: Log server setup
+  hosts: logserver
+  become: true
+
+  roles:
+    - log_srv_setup

@@ -4,6 +4,7 @@
   become: true
 
   roles:
+    - log_client_setup
     - usefull_pkg_install
     - mysql_install
     - phpmyadmin_install

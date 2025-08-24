@@ -38,10 +38,15 @@
     - /opt/seafile-data
     - /opt/seafile-mysql/db
     - /opt/notification-data
-    - /opt/seafile-caddy
+    - /opt/seafile-caddy/certs
 - name: Create /opt/seafile-caddy/certs/cert.pem
   ansible.builtin.command:
-    cmd: openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /opt/seafile-caddy/private/{{ server_name }}.key -out /opt/seafile-caddy/certs/{{ server_name }}.crt -subj "/C=RU/ST=St.Peter/L=St.Peter/O=MyCompany/OU=IT/CN={{ server_name }}"
+    cmd: >
+      openssl req -x509 -nodes -days 365
+      -newkey rsa:2048
+      -keyout ./key.pem
+      -out ./cert.pem
+      -subj "/C=RU/ST=St.Peter/L=St.Peter/O=MyCompany/OU=IT/CN={{ server_name }}"
     chdir: /opt/seafile-caddy/certs/
 
 # - name: Pull Docker images

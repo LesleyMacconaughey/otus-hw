@@ -36,8 +36,11 @@ services:
     container_name: seafile
     # ports:
     #   - "80:80"
+    extra_hosts:
+      - "seafile.lan:192.168.90.3"
     volumes:
       - ${SEAFILE_VOLUME:-/opt/seafile-data}:/shared
+      - "/opt/seafile-caddy/certs/cert.pem:/usr/local/share/ca-certificates/cert.crt"
     environment:
       - DB_HOST=${SEAFILE_MYSQL_DB_HOST:-db}
       - DB_PORT=${SEAFILE_MYSQL_DB_PORT:-3306}
@@ -59,7 +62,9 @@ services:
       - ENABLE_SEADOC=${ENABLE_SEADOC:-true}
       - SEADOC_SERVER_URL=${SEAFILE_SERVER_PROTOCOL:-http}://${SEAFILE_SERVER_HOSTNAME:?Variable is not set or empty}/sdoc-server
     labels:
-      caddy: ${SEAFILE_SERVER_PROTOCOL:-http}://${SEAFILE_SERVER_HOSTNAME:?Variable is not set or empty}
+      #caddy: ${SEAFILE_SERVER_PROTOCOL:-http}://${SEAFILE_SERVER_HOSTNAME:?Variable is not set or empty}
+      caddy: ${SEAFILE_SERVER_HOSTNAME:?Variable is not set or empty} # leave this variables only
+      caddy.tls: "/data/caddy/certs/cert.pem /data/caddy/certs/key.pem"
       caddy.reverse_proxy: "{{upstreams 80}}"
     depends_on:
       # db:

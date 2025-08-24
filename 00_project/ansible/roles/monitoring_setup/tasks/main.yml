@@ -15,19 +15,19 @@
     group: root
     mode: '0644'
 
-- name: Stop docker gatus
-  ansible.builtin.command:
-    cmd: docker stop gatus
-    chdir: /opt/gatus
-
-- name: Remove old container
-  ansible.builtin.command:
-    cmd: docker rm gatus
-    chdir: /opt/gatus
+- name: Ensure gatus container is absent
+  community.docker.docker_container:
+    name: gatus
+    state: absent
 
 - name: Start docker gatus
-  ansible.builtin.command:
-    cmd: |
-      docker run -p 8080:8080 -d --mount type=bind,source=/opt/gatus/config.yaml,target=/config/config.yaml --name gatus twinproduction/gatus
-    chdir: /opt/gatus
+  community.docker.docker_container:
+    name: gatus
+    image: twinproduction/gatus
+    state: started
+    restart_policy: unless-stopped
+    published_ports:
+      - "8080:8080"
+    volumes:
+      - /opt/gatus/config.yaml:/config/config.yaml
 

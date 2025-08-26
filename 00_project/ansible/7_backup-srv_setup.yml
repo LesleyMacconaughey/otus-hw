@@ -1,3 +1,20 @@
-
-
-- log_client_setup
+---
+- name: Install rsync to web-01
+  hosts: web-01
+  become: true
+  tasks:
+    - name: Install rsync
+      ansible.builtin.apt:
+        name: rsync
+        state: present
+    - name: Add ansible user to groupe root
+      ansible.builtin.user:
+        name: ansible
+        groups: root
+        append: true
+- name: Backup server setup
+  hosts: backup-srv
+  become: true
+  roles:
+    - log_client_setup
+    - backup_srv_setup

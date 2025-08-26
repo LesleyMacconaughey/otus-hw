@@ -2,9 +2,9 @@
 - name: Configure monitoring-srv
   import_playbook: 8_monitoring-srv_setup.yml
 - name: Configure log server vm
-  import_playbook: 6_log_srv_setup.yml
+  import_playbook: 6_log-srv_setup.yml
 - name: Configure reverse-proxy vm
-  import_playbook: 2_web-01_setup.yml
+  import_playbook: 2_web-proxy_setup.yml
 - name: Configure db-01 vm
   import_playbook: 4_db-01_setup.yml
 - name: Configure db-02 vm

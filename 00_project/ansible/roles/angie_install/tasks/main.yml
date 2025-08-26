@@ -21,12 +21,12 @@
   ansible.builtin.apt:
     update_cache: true
 - name: Install Angie
-  package:
+  ansible.builtin.package:
     name: angie
     state: present
 
 - name: Create SSL directory
-  file:
+  ansible.builtin.file:
     path: "{{ ssl_dir }}"
     state: directory
     owner: root
@@ -65,13 +65,13 @@
   notify: Reload angie
 
 - name: Remove default site if present (to avoid conflicts)
-  file:
+  ansible.builtin.file:
     path: /etc/angie/http.d/default.conf
     state: absent
   notify: Reload angie
 
 - name: Deploy reverse proxy config with HTTP->HTTPS redirect
-  copy:
+  ansible.builtin.copy:
     dest: /etc/angie/http.d/reverse-proxy.conf
     owner: root
     group: root
@@ -125,7 +125,7 @@
   notify: Reload angie
 
 - name: Enable and start angie
-  service:
+  ansible.builtin.service:
     name: angie
     state: started
     enabled: true

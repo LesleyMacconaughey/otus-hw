@@ -4,3 +4,53 @@
   remote_user: root
   roles:
     - seafile-install
+
+
+# - name: Ensure base directories exist
+#   ansible.builtin.file:
+#     path: "{{ item }}"
+#     state: directory
+#     mode: '0755'
+#   loop:
+#     - /opt/seafile
+#     - /opt/seafile-data
+#     - /opt/seafile-mysql/db
+#     - /opt/notification-data
+#     - /opt/seafile-caddy/certs
+# - name: Upload Seafile configuration files
+#   ansible.builtin.copy:
+#     src: "{{ item.src }}"
+#     dest: "/opt/seafile/{{ item.dest }}"
+#     mode: '0644'
+#   loop:
+#     - { src: ".env", dest: ".env" }
+#     - { src: "seadoc.yml", dest: "seadoc.yml" }
+#     - { src: "seafile-server.yml", dest: "seafile-server.yml" }
+#     - { src: "caddy.yml", dest: "caddy.yml" }
+
+# - name: Generate private key for Caddy
+#   community.crypto.openssl_privatekey:
+#     path: /opt/seafile-caddy/certs/key.pem
+#     size: 2048
+#     type: RSA
+#     mode: '0600'
+
+# - name: Create self-signed certificate for Caddy
+#   community.crypto.x509_certificate:
+#     path: /opt/seafile-caddy/certs/cert.pem
+#     privatekey_path: /opt/seafile-caddy/certs/key.pem
+#     provider: selfsigned
+#     selfsigned_not_after: +365d
+
+# - name: Start Seafile services with Docker Compose v2
+#   community.docker.docker_compose_v2:
+#     project_src: /opt/seafile
+#     files:
+#       - seafile-server.yml
+#       - seadoc.yml
+#       - caddy.yml
+#     env_files:
+#       - /opt/seafile/.env
+#     state: present
+#     recreate: always
+#     pull: missing

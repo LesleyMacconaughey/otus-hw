@@ -28,6 +28,7 @@
     src: caddy.yml
     dest: /opt/seafile/caddy.yml
     mode: '0644'
+
 # Create directory of Seafile data
 - name: Create volume directory of Seafile data
   ansible.builtin.file:
@@ -39,6 +40,7 @@
     - /opt/seafile-mysql/db
     - /opt/notification-data
     - /opt/seafile-caddy/certs
+
 - name: Create /opt/seafile-caddy/certs/cert.pem
   ansible.builtin.command:
     cmd: >
@@ -49,21 +51,7 @@
       -subj "/C=RU/ST=St.Peter/L=St.Peter/O=MyCompany/OU=IT/CN={{ server_name }}"
     chdir: /opt/seafile-caddy/certs/
 
-# - name: Pull Docker images
-#   community.docker.docker_compose:
-#     project_src: /opt/seafile
-#     pull: true
-
-# - name: Start Docker containers
-#   community.docker.docker_compose:
-#     project_src: /opt/seafile
-#     build: true
-#     state: present   # или `state: started`
-#     restarted: true  # правильный параметр
-
 - name: Run docker-compose to start Seafile services
   ansible.builtin.command:
     cmd: docker compose up -d
     chdir: /opt/seafile
-#   register: seafile_compose_output
-#   ignore_errors: yes

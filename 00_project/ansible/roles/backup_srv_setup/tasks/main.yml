@@ -1,0 +1,31 @@
+#SPDX-License-Identifier: MIT-0
+---
+# tasks file for backup_srv_setup
+- name: Install packages
+  ansible.builtin.apt:
+    name:
+      - cron
+      - rsync
+      - rdiff-backup
+    state: present
+    update_cache: true
+- name: Copy ssh key
+  ansible.builtin.copy:
+    src: ~/.ssh/id_rsa
+    dest: /root/.ssh/id_rsa
+    mode: '0600'
+    owner: root
+    group: root
+- name: Copy backup script
+  ansible.builtin.copy:
+    src: files/backup.sh
+    dest: /usr/local/bin/backup.sh
+    mode: '0755'
+    owner: root
+- name: Add cron task
+  ansible.builtin.cron:
+    name: "Backup script"
+    minute: "*/1"
+    job: "/usr/local/bin/backup.sh"
+    user: root
+

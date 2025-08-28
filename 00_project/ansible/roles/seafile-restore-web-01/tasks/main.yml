@@ -1,3 +1,7 @@
 #SPDX-License-Identifier: MIT-0
 ---
 # tasks file for seafile-restore-web-01
+- name: Run docker-compose to start Seafile services
+  ansible.builtin.command:
+    cmd: docker compose up -d
+    chdir: /opt/seafile

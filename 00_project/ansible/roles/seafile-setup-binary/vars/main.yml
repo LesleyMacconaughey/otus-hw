@@ -1,0 +1,4 @@
+#SPDX-License-Identifier: MIT-0
+---
+# vars file for seafile-setup-binary
+seafile_dir: /opt/seafile

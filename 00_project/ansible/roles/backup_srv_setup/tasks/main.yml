@@ -41,10 +41,10 @@
   loop:
     - backup.sh
     - restore_files.sh
-    - restore_databases.sh
+    - restore_database.sh
 - name: Add cron task
   ansible.builtin.cron:
     name: "Backup script"
-    minute: "*/15"
+    minute: "*/60"
     job: "/usr/local/bin/backup.sh"
     user: root

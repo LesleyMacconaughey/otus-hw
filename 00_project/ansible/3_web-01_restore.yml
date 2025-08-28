@@ -1,5 +1,5 @@
 ---
-- name: Web-01 setup
+- name: Web-01 setup before restore
   hosts: web-01
   become: true
   roles:
@@ -12,3 +12,9 @@
   become: true
   roles:
     - restore-files-from-backup-srv
+
+- name: Web-01 setup after restore
+  hosts: web-01
+  become: true
+  roles:
+    - seafile-restore-web-01

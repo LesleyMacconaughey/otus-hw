@@ -39,6 +39,7 @@
     password: "{{ mysql_replica_setup_root_password }}"
     host: "%"
     priv: "*.*:ALL,GRANT"
+    append_privs: true
     state: present
     login_unix_socket: /var/run/mysqld/mysqld.sock
 - name: Add bind-address in /etc/mysql/mysql.conf.d/mysqld.cnf

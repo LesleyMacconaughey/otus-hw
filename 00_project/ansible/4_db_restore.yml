@@ -1,0 +1,44 @@
+---
+- name: DB-01, db-02 setup
+  hosts: db-01, db-02
+  become: true
+  roles:
+    - log_client_setup
+    - usefull_pkg_install
+    - mysql_install
+    - phpmyadmin_install
+
+- name: MySQL source setup
+  hosts: db-01
+  become: true
+  roles:
+    - mysql_source_setup
+
+- name: MySQL replica setup
+  hosts: db-02
+  become: true
+  roles:
+    - mysql_replica_setup
+
+- name: Restore databases
+  hosts: backup-srv
+  become: true
+  tasks:
+    - name: Restore MySQL databases
+      ansible.builtin.command:
+        cmd: /usr/local/bin/restore_database.sh
+- name: Wait 5 seconds
+  hosts: db-01
+  become: true
+  tasks:
+    - name: Pause for 5 seconds
+      ansible.builtin.pause:
+        seconds: 5
+- name: Restart docker compose
+  hosts: web-01
+  become: true
+  tasks:
+    - name: Restart docker compose
+      ansible.builtin.command:
+        cmd: docker compose restart
+        chdir: /opt/seafile

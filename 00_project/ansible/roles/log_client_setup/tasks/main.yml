@@ -6,6 +6,7 @@
     name:
       - rsyslog
       - chrony
+      - rsync
     state: present
     update_cache: true
 

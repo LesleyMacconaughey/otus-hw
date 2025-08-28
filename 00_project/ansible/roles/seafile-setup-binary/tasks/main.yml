@@ -1,0 +1,89 @@
+#SPDX-License-Identifier: MIT-0
+---
+# tasks file for seafile-setup-binary
+- name: Install cache server
+  ansible.builtin.apt:
+    name:
+      - memcached
+      - libmemcached-dev
+    update_cache: true
+- name: Install system dependencies
+  ansible.builtin.apt:
+    name:
+      - python3
+      - python3-dev
+      - python3-setuptools
+      - python3-pip
+      - libmariadb-dev-compat
+      - ldap-utils
+      - libldap2-dev
+      - libsasl2-dev
+      - python3.11-venv
+    state: present
+    update_cache: true
+
+- name: Create Seafile directory
+  ansible.builtin.file:
+    path: "{{ seafile_dir }}"
+    state: directory
+    mode: '0755'
+
+- name: Create Python virtual environment
+  community.general.pipx:
+    name: virtualenv
+    state: present
+  when: ansible_python_version is version('3.7', '>=')
+
+- name: Setup Python virtual environment
+  community.general.pipx:
+    name: virtualenv
+    state: present
+  when: ansible_python_version is version('3.6', '<')
+
+- name: Create virtual environment
+  ansible.builtin.command:
+    cmd: python3 -m venv python-venv
+    chdir: "{{ seafile_dir }}"
+  args:
+    creates: "{{ seafile_dir }}/python-venv"
+
+- name: Install Python packages in virtual environment
+  pip:
+    name:
+      - django==4.2.*
+      - future==0.18.*
+      - mysqlclient==2.1.*
+      - pymysql
+      - pillow==10.0.*
+      - pylibmc
+      - captcha==0.4
+      - markupsafe==2.0.1
+      - jinja2
+      - sqlalchemy==2.0.18
+      - psd-tools
+      - django-pylibmc
+      - django_simple_captcha==0.5.*
+      - djangosaml2==1.5.*
+      - pysaml2==7.2.*
+      - pycryptodome==3.16.*
+      - cffi==1.15.1
+      - lxml
+      - python-ldap==3.4.3
+    virtualenv: "{{ seafile_dir }}/python-venv"
+    extra_args: "--timeout=3600"
+    state: present
+
+- name: Verify virtual environment creation
+  stat:
+    path: "{{ seafile_dir }}/python-venv/bin/activate"
+  register: venv_stat
+
+- name: Show virtual environment status
+  debug:
+    msg: "Virtual environment created successfully at {{ seafile_dir }}/python-venv"
+  when: venv_stat.stat.exists
+
+- name: Add user seafile
+  ansible.builtin.user:
+    name: seafile
+    state: present

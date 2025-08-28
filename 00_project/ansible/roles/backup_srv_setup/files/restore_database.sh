@@ -2,7 +2,7 @@
 set -euo pipefail
 
 SOURCE_HOST="192.168.90.4"
-SOURCE_SSH="root@192.168.90.4"
+SOURCE_SSH="ansible@192.168.90.4"
 REPLICA_HOST="192.168.90.5"
 REPL_USER="repl"
 REPL_PASS="12345"
@@ -17,16 +17,23 @@ mysql -h $REPLICA_HOST -u root -p$MYSQL_ROOT_PASS -e "STOP REPLICA; RESET REPLIC
 
 echo "=== Чищу данные на source для выбранных баз ==="
 for db in "${DATABASES[@]}"; do
-    ssh $SOURCE_SSH "mysql -u root -p$MYSQL_ROOT_PASS -e \"DROP DATABASE IF EXISTS $db; CREATE DATABASE $db;\""
+    ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $SOURCE_SSH "mysql -u root -p$MYSQL_ROOT_PASS -e \"DROP DATABASE IF EXISTS $db; CREATE DATABASE $db;\""
 done
 
 echo "=== Заливаю дампы выбранных баз на source ==="
 for db in "${DATABASES[@]}"; do
-    mysql -h $SOURCE_HOST -u root -p$MYSQL_ROOT_PASS $db < "$SCHEMA_DUMP_DIR/$db.sql"
+    mysql -h $SOURCE_HOST -u root -p$MYSQL_ROOT_PASS $db < "$SCHEMA_DUMP_DIR/$db"
 done
 
 echo "=== Сбрасываю GTID на source ==="
-ssh $SOURCE_SSH "mysql -u root -p$MYSQL_ROOT_PASS -e 'RESET MASTER;'"
+ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $SOURCE_SSH "mysql -u root -p$MYSQL_ROOT_PASS -e 'RESET BINARY LOGS AND GTIDS;'"
+
+echo "=== Обнуляю GTID на реплике ==="
+mysql -h $REPLICA_HOST -u root -p$MYSQL_ROOT_PASS -e "
+STOP REPLICA;
+RESET REPLICA ALL;
+RESET BINARY LOGS AND GTIDS;
+"
 
 echo "=== Настраиваю репликацию на replica ==="
 mysql -h $REPLICA_HOST -u root -p$MYSQL_ROOT_PASS -e "

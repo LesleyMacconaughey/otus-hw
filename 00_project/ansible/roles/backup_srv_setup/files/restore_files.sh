@@ -31,7 +31,7 @@ log "Начало восстановления из последнего бэк�
 # Восстановление файлов
 log "Начало восстановления файлов из $BACKUP_PATH"
 rsync -avz --delete \
-    -e "ssh -o StrictHostKeyChecking=no -i $SSH_KEY" \
+    -e "ssh -o StrictHostKeyChecking=no -i $SSH_KEY -q" \
     --rsync-path="sudo rsync" \
     "$BACKUP_PATH/" \
     "$REMOTE_USER@$REMOTE_HOST:$REMOTE_DIR/" 2>&1 | tee -a "$LOG_FILE"

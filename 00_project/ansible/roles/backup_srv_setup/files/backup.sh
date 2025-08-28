@@ -29,7 +29,7 @@ log() {
 # Выполняем резервное копирование
 log "Начало резервного копирования $REMOTE_DIR"
 rsync -avz --delete \
-    -e "ssh -o StrictHostKeyChecking=no -i /root/.ssh/id_rsa" \
+    -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i /root/.ssh/id_rsa" -q \
     --rsync-path="sudo rsync" \
     "$REMOTE_USER@$REMOTE_HOST:$REMOTE_DIR/" \
     "$BACKUP_PATH/" 2>&1 | tee -a "$LOG_FILE"
@@ -52,7 +52,7 @@ for db in "${MYSQL_DATABASES[@]}"; do
     log "Резервное копирование базы данных: $db"
     
     # Выполняем дамп базы данных на удаленном сервере
-    ssh -i "$SSH_KEY" "$REMOTE_USER@$MYSQL_HOST" \
+    ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i "$SSH_KEY" "$REMOTE_USER@$MYSQL_HOST" -q \
         "/usr/bin/mysqldump --single-transaction --set-gtid-purged=OFF -h $MYSQL_HOST -u $MYSQL_USER -p'$MYSQL_PASS' $db" \
         > "$BACKUP_PATH/mysql/$db" 2>> "$LOG_FILE"
     

@@ -4,3 +4,4 @@
 mysql_source_setup_seafile_password: 12345
 mysql_source_setup_root_password: 12345
 mysql_source_setup_repl_password: 12345
+mysql_source_setup_backup_password: 12345

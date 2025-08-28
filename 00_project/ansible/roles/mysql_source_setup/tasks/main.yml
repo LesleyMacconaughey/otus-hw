@@ -51,6 +51,8 @@
     host: "%"
     priv: "*.*:ALL,GRANT"
     state: present
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+  failed_when: false
 - name: Create database user with name 'repl' and password '12345' with all database privileges
   community.mysql.mysql_user:
     login_user: root
@@ -58,6 +60,16 @@
     check_implicit_admin: true
     name: repl
     password: "{{ mysql_source_setup_repl_password }}"
+    host: "%"
+    priv: "*.*:ALL,GRANT"
+    state: present
+- name: Create database user with name 'backup' and password '12345' with all database privileges
+  community.mysql.mysql_user:
+    login_user: root
+    login_password: "{{ mysql_source_setup_root_password }}"
+    check_implicit_admin: true
+    name: backup
+    password: "{{ mysql_source_setup_backup_password }}"
     host: "%"
     priv: "*.*:ALL,GRANT"
     state: present

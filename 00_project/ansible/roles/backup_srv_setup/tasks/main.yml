@@ -1,12 +1,27 @@
 #SPDX-License-Identifier: MIT-0
 ---
 # tasks file for backup_srv_setup
+- name: Download MySQL deb package
+  ansible.builtin.get_url:
+    url: "https://repo.mysql.com//mysql-apt-config_0.8.34-1_all.deb"
+    dest: /tmp/mysql.deb
+    mode: '0644'
+    validate_certs: false
+    checksum: "md5:ab23dec6619a7e65e8462646936ee49f"
+- name: Install mysql-apt-config
+  ansible.builtin.apt:
+    deb: /tmp/mysql.deb
+    state: present
+- name: Update apt cache
+  ansible.builtin.apt:
+    update_cache: true
 - name: Install packages
   ansible.builtin.apt:
     name:
       - cron
       - rsync
       - rdiff-backup
+      - mysql-client
     state: present
     update_cache: true
 - name: Copy ssh key
@@ -25,7 +40,12 @@
 - name: Add cron task
   ansible.builtin.cron:
     name: "Backup script"
-    minute: "*/1"
+    minute: "*/15"
     job: "/usr/local/bin/backup.sh"
     user: root
-
+- name: Copy restore script
+  ansible.builtin.copy:
+    src: files/restore.sh
+    dest: /usr/local/bin/restore.sh
+    mode: '0755'
+    owner: root

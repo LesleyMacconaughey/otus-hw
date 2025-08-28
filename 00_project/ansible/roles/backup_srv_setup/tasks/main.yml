@@ -31,21 +31,20 @@
     mode: '0600'
     owner: root
     group: root
-- name: Copy backup script
+- name: Copy script files
   ansible.builtin.copy:
-    src: files/backup.sh
-    dest: /usr/local/bin/backup.sh
+    src: files/{{ item }}
+    dest: /usr/local/bin/{{ item }}
     mode: '0755'
     owner: root
+    group: root
+  loop:
+    - backup.sh
+    - restore_files.sh
+    - restore_databases.sh
 - name: Add cron task
   ansible.builtin.cron:
     name: "Backup script"
     minute: "*/15"
     job: "/usr/local/bin/backup.sh"
     user: root
-- name: Copy restore script
-  ansible.builtin.copy:
-    src: files/restore.sh
-    dest: /usr/local/bin/restore.sh
-    mode: '0755'
-    owner: root

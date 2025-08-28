@@ -1,0 +1,14 @@
+---
+- name: Web-01 setup
+  hosts: web-01
+  become: true
+  roles:
+    - log_client_setup
+    - docker_install
+    - hostsfile_add_info
+
+- name: Restore files from backup-srv
+  hosts: backup-srv
+  become: true
+  roles:
+    - restore-files-from-backup-srv

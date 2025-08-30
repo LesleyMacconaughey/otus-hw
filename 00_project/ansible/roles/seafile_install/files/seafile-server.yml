@@ -32,8 +32,8 @@ services:
       - seafile-net
 
   seafile:
-    image: ${SEAFILE_IMAGE:-seafileltd/seafile-mc:12.0-latest}
-    container_name: seafile
+    # image: ${SEAFILE_IMAGE:-seafileltd/seafile-mc:12.0-latest}
+    image: ${SEAFILE_IMAGE:-seafileltd/seafile-pro-mc:12.0-latest}
     # ports:
     #   - "80:80"
     extra_hosts:

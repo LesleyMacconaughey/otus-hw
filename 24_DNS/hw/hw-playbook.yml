@@ -14,7 +14,7 @@
   tasks:
     - name: copy named.conf (master)
       template:
-        src: master-named.conf.j2
+        src: files/master-named.conf
         dest: /etc/named.conf
         owner: root
         group: named
@@ -28,11 +28,11 @@
         group: named
         mode: 0660
       with_items:
-        - templates/named.ddns.lab
-        - templates/named.dns.lab
-        - templates/named.dns.lab.client
-        - templates/named.dns.lab.rev
-        - templates/named.newdns.lab
+        - named/named.ddns.lab
+        - named/named.dns.lab
+        - named/named.dns.lab.client
+        - named/named.dns.lab.rev
+        - named/named.newdns.lab
 
 
     - name: set /etc/named permissions
@@ -62,7 +62,7 @@
   tasks:
     - name: copy named.conf (slave)
       template:
-        src: slave-named.conf.j2
+        src: files/slave-named.conf
         dest: /etc/named.conf
         owner: root
         group: named
@@ -95,7 +95,7 @@
   tasks:
     - name: copy resolv.conf for clients
       template:
-        src: client-resolv.conf.j2
+        src: files/client-resolv.conf
         dest: /etc/resolv.conf
         owner: root
         group: root

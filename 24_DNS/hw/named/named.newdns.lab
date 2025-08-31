@@ -1,7 +1,7 @@
 $TTL 3600
 $ORIGIN newdns.lab.
 @   IN SOA ns01.dns.lab. root.dns.lab. (
-        2025083101 ; serial
+        2025083102 ; serial
         3600
         600
         86400

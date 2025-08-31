@@ -1,0 +1,14 @@
+$TTL 3600
+$ORIGIN newdns.lab.
+@   IN SOA ns01.dns.lab. root.dns.lab. (
+        2025083101 ; serial
+        3600
+        600
+        86400
+        600 )
+    IN NS ns01.dns.lab.
+    IN NS ns02.dns.lab.
+ns01 IN A 192.168.50.10
+ns02 IN A 192.168.50.11
+www  IN A 192.168.50.15
+www  IN A 192.168.50.16

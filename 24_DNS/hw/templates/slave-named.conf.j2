@@ -1,0 +1,25 @@
+options {
+    listen-on port 53 { 192.168.50.11; };
+    directory "/var/named";
+    recursion yes;
+    allow-query { any; };
+};
+
+acl client  { 192.168.50.15; };
+acl client2 { 192.168.50.16; };
+
+view "client" {
+    match-clients { client; };
+    zone "dns.lab"   { type slave; masters { 192.168.50.10; }; file "/etc/named/named.dns.lab.client"; };
+    zone "newdns.lab" { type slave; masters { 192.168.50.10; }; file "/etc/named/named.newdns.lab"; };
+};
+
+view "client2" {
+    match-clients { client2; };
+    zone "dns.lab"   { type slave; masters { 192.168.50.10; }; file "/etc/named/named.dns.lab"; };
+};
+
+view "any" {
+    match-clients { any; };
+    zone "." IN { type hint; file "named.ca"; };
+};

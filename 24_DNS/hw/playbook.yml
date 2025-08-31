@@ -1,0 +1,124 @@
+---
+- hosts: all
+  become: yes
+  tasks:
+    - name: install packages
+      yum:
+        name:
+          - bind
+          - bind-utils
+          - vim
+        state: latest
+        update_cache: true
+
+    - name: ensure chronyd is running
+      service:
+        name: chronyd
+        state: restarted
+        enabled: true
+
+# ========== Master DNS (ns01) ==========
+- hosts: ns01
+  become: yes
+  tasks:
+    - name: copy named.conf (master)
+      template:
+        src: master-named.conf.j2
+        dest: /etc/named.conf
+        owner: root
+        group: named
+        mode: 0640
+
+    - name: copy zone files
+      copy:
+        src: "{{ item }}"
+        dest: /etc/named/
+        owner: root
+        group: named
+        mode: 0660
+      with_items:
+        - templates/named.dns.lab
+        - templates/named.dns.lab.client
+        - templates/named.newdns.lab
+
+    - name: set /etc/named permissions
+      file:
+        path: /etc/named
+        owner: root
+        group: named
+        mode: 0670
+
+    - name: copy resolv.conf
+      template:
+        src: servers-resolv.conf.j2
+        dest: /etc/resolv.conf
+        owner: root
+        group: root
+        mode: 0644
+
+    - name: restart named
+      service:
+        name: named
+        state: restarted
+        enabled: yes
+
+# ========== Slave DNS (ns02) ==========
+- hosts: ns02
+  become: yes
+  tasks:
+    - name: copy named.conf (slave)
+      template:
+        src: slave-named.conf.j2
+        dest: /etc/named.conf
+        owner: root
+        group: named
+        mode: 0640
+
+    - name: copy resolv.conf
+      template:
+        src: servers-resolv.conf.j2
+        dest: /etc/resolv.conf
+        owner: root
+        group: root
+        mode: 0644
+
+    - name: set /etc/named permissions
+      file:
+        path: /etc/named
+        owner: root
+        group: named
+        mode: 0670
+
+    - name: restart named
+      service:
+        name: named
+        state: restarted
+        enabled: yes
+
+# ========== Clients ==========
+- hosts: client,client2
+  become: yes
+  tasks:
+    - name: copy resolv.conf for clients
+      template:
+        src: client-resolv.conf.j2
+        dest: /etc/resolv.conf
+        owner: root
+        group: root
+        mode: 0644
+
+    - name: copy rndc conf
+      copy:
+        src: rndc.conf
+        dest: /home/vagrant/rndc.conf
+        owner: vagrant
+        group: vagrant
+        mode: 0644
+
+    - name: copy motd
+      copy:
+        src: client-motd
+        dest: /etc/motd
+        owner: root
+        group: root
+        mode: 0644

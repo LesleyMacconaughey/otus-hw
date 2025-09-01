@@ -1,0 +1,90 @@
+# prov.yml (корень проекта dynamicweb/)
+---
+- name: Provision DynamicWeb host
+  hosts: DynamicWeb
+  become: true
+  gather_facts: false
+
+  vars:
+    docker_compose_version: "1.29.2"
+    docker_compose_path: "/usr/local/bin/docker-compose"
+
+  tasks:
+    - name: Install required apt packages
+      apt:
+        name:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - software-properties-common
+          - gnupg
+        state: present
+        update_cache: true
+      tags: [docker]
+
+    - name: Add Docker official GPG key
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+      tags: [docker]
+
+    - name: Add Docker APT repository (stable)
+      apt_repository:
+        repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable"
+        state: present
+        filename: docker
+        update_cache: true
+      tags: [docker]
+
+    - name: Install Docker CE
+      apt:
+        name:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+        state: present
+        update_cache: true
+      tags: [docker]
+
+    - name: Ensure docker group exists and vagrant is member
+      user:
+        name: vagrant
+        groups: docker
+        append: true
+
+    - name: Install docker-compose (standalone binary)
+      get_url:
+        url: "https://github.com/docker/compose/releases/download/{{ docker_compose_version }}/docker-compose-Linux-x86_64"
+        dest: "{{ docker_compose_path }}"
+        mode: "0755"
+
+    - name: Copy project to /home/vagrant
+      copy:
+        src: project
+        dest: /home/vagrant
+        owner: vagrant
+        group: vagrant
+        mode: "0755"
+
+    - name: Create .env for compose (hidden file)
+      copy:
+        dest: /home/vagrant/project/.env
+        content: |
+          # DB
+          DB_NAME=wordpress
+          DB_ROOT_PASSWORD=dbpassword
+          # Django
+          MYSITE_SECRET_KEY=put_your_django_app_secret_key_here
+          DEBUG=True
+        owner: vagrant
+        group: vagrant
+        mode: "0600"
+
+    - name: Reset SSH connection so new docker group membership applies
+      meta: reset_connection
+
+    - name: Up docker-compose stack
+      become_user: vagrant
+      shell: docker-compose up -d
+      args:
+        chdir: /home/vagrant/project

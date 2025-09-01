@@ -1,7 +1,7 @@
 alerting:
   telegram:
-    token: "6655727844:AAFgr2UsOuoDrwoLVffvLnMUnwXqI5YaUkE"
-    id: "1067340932"
+    token: "secret"
+    id: "secret"
     default: true
 
 endpoints:

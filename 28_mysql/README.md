@@ -112,3 +112,40 @@ mysql> SHOW TABLES;
 
 Создадим пользователя для репликациии и даем ему права на эту самую репликацию:
 
+```sql
+CREATE USER 'repl'@'%' IDENTIFIED BY '12345';
+```
+```sql
+SELECT user,host FROM mysql.user where user='repl';
+```
+
+    +------+------+
+    | user | host |
+    +------+------+
+    | repl | %    |
+    +------+------+
+
+```sql
+GRANT REPLICATION SLAVE, REPLICATION CLIENT ON *.* TO 'repl'@'%';
+FLUSH PRIVILEGES;
+```
+Проверка
+
+```sql
+SHOW GRANTS FOR 'repl'@'%';
+```
+
+    mysql> SHOW GRANTS FOR 'repl'@'%';
+    +------------------------------------------------------------------+
+    | Grants for repl@%                                                |
+    +------------------------------------------------------------------+
+    | GRANT REPLICATION SLAVE, REPLICATION CLIENT ON *.* TO `repl`@`%` |
+    +------------------------------------------------------------------+
+    1 row in set (0.00 sec)
+
+Дампим базу длā последующего залива на сдейв и игнорируем таблицы по заданию:
+
+```sh
+mysqldump --all-databases --triggers --routines --source-data --set-gtid-purged=OFF --ignore-table=bet.events_on_demand --ignore-table=bet.v_same_event -uroot -p > master.sql
+```
+

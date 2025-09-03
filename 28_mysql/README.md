@@ -50,6 +50,7 @@ binlog_format = row
 gtid_mode = ON
 enforce-gtid-consistency = ON
 log-replica-updates = ON
+mysql_native_password = ON
 ```
 
 Перезапустим mysql
@@ -148,4 +149,77 @@ SHOW GRANTS FOR 'repl'@'%';
 ```sh
 mysqldump --all-databases --triggers --routines --source-data --set-gtid-purged=OFF --ignore-table=bet.events_on_demand --ignore-table=bet.v_same_event -uroot -p > master.sql
 ```
+Копируем полученный файл дампа на гипервизор и переносим на `db2`
 
+```sh
+scp -i .vagrant/machines/db1/virtualbox/private_key -P 2222 vagrant@127.0.0.1:/home/vagrant/master.sql .
+scp -i .vagrant/machines/db2/virtualbox/private_key -P 2200 master.sql vagrant@127.0.0.1:/home/vagrant/
+```
+Настраиваем `replica` сервер
+
+```sh
+vi /etc/mysql/mysql.conf.d/mysqld.cnf
+```
+
+Добавим
+```conf
+[mysqld]
+...
+server-id = 2
+log_bin = mysql-bin
+binlog_format = row
+gtid_mode = ON
+enforce-gtid-consistency = ON
+log-replica-updates = ON
+```
+
+Заливаем дамп мастера и убеждаемся, что база есть и она без лишних таблиц:
+```sql
+SOURCE /home/vagrant/master.sql
+SHOW DATABASES LIKE 'bet';
+```
+    +----------------+
+    | Database (bet) |
+    +----------------+
+    | bet            |
+    +----------------+
+
+```sql
+USE bet;
+SHOW TABLES;
+```
+    +---------------+
+    | Tables_in_bet |
+    +---------------+
+    | bookmaker     |
+    | competition   |
+    | market        |
+    | odds          |
+    | outcome       |
+    +---------------+
+    5 rows in set (0.01 sec)
+
+Подключаем и запускаем слейв:
+
+```sql
+CHANGE REPLICATION SOURCE TO SOURCE_HOST = "192.168.56.11", SOURCE_PORT = 3306, SOURCE_USER = "repl", SOURCE_PASSWORD = "12345", SOURCE_AUTO_POSITION = 1;
+START REPLICA;
+SHOW REPLICA STATUS\G
+```
+    *************************** 1. row ***************************
+                Replica_IO_State: Waiting for source to send event
+                    Source_Host: 192.168.56.11
+                    Source_User: repl
+                    Source_Port: 3306
+                    Connect_Retry: 60
+                Source_Log_File: mysql-bin.000003
+            Read_Source_Log_Pos: 1058
+                Relay_Log_File: db2-relay-bin.000002
+                    Relay_Log_Pos: 93332
+            Relay_Source_Log_File: mysql-bin.000001
+            Replica_IO_Running: Yes
+            Replica_SQL_Running: No
+                Replicate_Do_DB: 
+            Replicate_Ignore_DB: 
+            Replicate_Do_Table: 
+        Replicate_Ignore_Table: bet.events_on_demand,bet.v_same_event

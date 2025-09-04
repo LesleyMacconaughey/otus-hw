@@ -1,0 +1,28 @@
+Vagrant.configure("2") do |config|
+  # Общие настройки для всех машин
+  config.vm.box = "centos/stream9"
+#   config.vm.box_version = "20210210.0"
+
+  config.vm.provider :virtualbox do |v|
+    v.memory = 2048
+    v.cpus = 1
+  end
+
+  # Список машин с именами и IP-адресами
+  boxes = [
+    { name: "ipa.otus.lan", ip: "192.168.57.10" },
+    { name: "client1.otus.lan", ip: "192.168.57.11" },
+    { name: "client2.otus.lan", ip: "192.168.57.12" }
+  ]
+
+  # Создание каждой машины
+  boxes.each do |opts|
+    config.vm.define opts[:name] do |node|
+      node.vm.hostname = opts[:name]
+      node.vm.network "private_network", ip: opts[:ip]
+
+      # Опционально: синхронизация папки для удобства работы
+      node.vm.synced_folder ".", "/vagrant", disabled: true
+    end
+  end
+end

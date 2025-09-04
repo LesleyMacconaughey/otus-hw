@@ -1,0 +1,6 @@
+---
+- name: install packages
+  hosts: all
+  become: true
+  roles:
+    - install_packages

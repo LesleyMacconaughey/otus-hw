@@ -21,6 +21,12 @@ Vagrant.configure("2") do |config|
       node.vm.hostname = opts[:name]
       node.vm.network "private_network", ip: opts[:ip]
 
+      # Проброс портов только для ipa.otus.lan
+      if opts[:name] == "ipa.otus.lan"
+        node.vm.network "forwarded_port", guest: 80, host: 80
+        node.vm.network "forwarded_port", guest: 443, host: 443
+      end
+
       # Опционально: синхронизация папки для удобства работы
       node.vm.synced_folder ".", "/vagrant", disabled: true
     end

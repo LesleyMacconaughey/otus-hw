@@ -163,4 +163,12 @@ postgres=# CREATE DATABASE otus_test;
 
 ## Настройка hot_standby репликации с использованием слотов с помощью ansible
 
+Для настройки hot_standby репликации с использованием слотов требуется из папки `ansible` запустить плейбук:
 
+```sh
+ansible-playbook provision.yml
+```
+
+## Настройка резервного копирования с помощью утилиты Barman
+
+Роль для настройки с помощью `ansible` расположена в папке `ansible/install_barman`.
